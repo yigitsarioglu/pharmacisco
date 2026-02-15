@@ -1,0 +1,26 @@
+{
+    "manifest_version": 3,
+    "name": "Pharmacisco Bridge",
+    "version": "1.0",
+    "description": "Eczane sayfasından verileri Pharmacisco masaüstü uygulamasına aktarır.",
+    "permissions": [
+        "activeTab",
+        "scripting"
+    ],
+    "host_permissions": [
+        "http://localhost:5500/*"
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "16": "icon.png",
+            "48": "icon.png",
+            "128": "icon.png"
+        }
+    },
+    "icons": {
+        "16": "icon.png",
+        "48": "icon.png",
+        "128": "icon.png"
+    }
+}

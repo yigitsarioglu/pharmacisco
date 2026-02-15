@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Medula Reçete - Mock Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 20px;
+        }
+
+        .header {
+            background-color: #5b7c99;
+            color: white;
+            padding: 5px 10px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .panel {
+            background-color: #e6e6fa;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .row {
+            display: flex;
+            margin-bottom: 5px;
+            align-items: center;
+        }
+
+        .label {
+            width: 150px;
+            font-weight: bold;
+        }
+
+        input {
+            border: 1px solid #999;
+            padding: 2px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            font-size: 12px;
+        }
+
+        th {
+            background-color: #5b7c99;
+            color: white;
+            padding: 5px;
+            text-align: left;
+        }
+
+        td {
+            border: 1px solid #ccc;
+            padding: 5px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">Reçete No : HP6G8R | MESUDE ERTEKİN (ECZACI)</div>
+
+    <!-- Patient / Prescription Info -->
+    <div class="panel">
+        <div class="row">
+            <div class="label">T.C. Kimlik No (*):</div>
+            <input type="text" value="34242342342" disabled>
+            <div class="label" style="margin-left: 20px;">Hasta Türü:</div>
+            <input type="text" value="Normal" disabled>
+        </div>
+        <div class="row">
+            <div class="label">Reçete Tarihi (*):</div>
+            <input type="text" value="24/05/2010" disabled>
+            <!-- Important: The extension looks for "Adı" or "Adı Soyadı" labels -->
+            <div class="label" style="margin-left: 20px;">Hasta Adı Soyadı :</div>
+            <input type="text" value="FATMA YILMAZ" disabled>
+        </div>
+        <div class="row">
+            <div class="label">Dr. Adı/Soyadı (*):</div>
+            <input type="text" value="MEHMET ÖZÇEP" disabled>
+            <div class="label" style="margin-left: 20px;">Protokol No:</div>
+            <input type="text" value="123456" disabled>
+        </div>
+    </div>
+
+    <div class="header">İlaç Listesi</div>
+
+    <!-- Drug Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>Barkod</th>
+                <th>Adı</th>
+                <th>Adet</th>
+                <th>Kullanım</th>
+                <th>Tutar</th>
+                <th>Mesaj</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Drug 1: Matches one in our DB -->
+            <tr>
+                <td>8699717010109</td>
+                <td>YASMIN 21 FILM TABLET</td>
+                <td>1</td>
+                <td>1 x 1 (21 Gün)</td>
+                <td>55,00</td>
+                <td>yok</td>
+            </tr>
+            <!-- Drug 2: Matches our mock barcode in DB -->
+            <tr>
+                <td>8699809018091</td>
+                <td>AMOKLAVIN 1000 MG</td>
+                <td>1</td>
+                <td>2 x 1 (Tok)</td>
+                <td>32,50</td>
+                <td>yok</td>
+            </tr>
+            <!-- Drug 3: Random one -->
+            <tr>
+                <td>8699569700081</td>
+                <td>ANTEPSIN 250 CC.SUSP</td>
+                <td>3</td>
+                <td>2 x 1</td>
+                <td>15,00</td>
+                <td>yok</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="margin-top: 20px; font-size: 12px; color: red;">
+        * Bu sayfa Pharmacisco Chrome Extension test amaçlı oluşturulmuştur.
+    </div>
+
+</body>
+
+</html>
