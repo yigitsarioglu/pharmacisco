@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Medula Reçete - Mock Page 1</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 20px;
+        }
+
+        .header {
+            background-color: #5b7c99;
+            color: white;
+            padding: 5px 10px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .panel {
+            background-color: #e6e6fa;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .row {
+            display: flex;
+            margin-bottom: 5px;
+            align-items: center;
+        }
+
+        .label {
+            width: 150px;
+            font-weight: bold;
+        }
+
+        input {
+            border: 1px solid #999;
+            padding: 2px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            font-size: 12px;
+        }
+
+        th {
+            background-color: #5b7c99;
+            color: white;
+            padding: 5px;
+            text-align: left;
+        }
+
+        td {
+            border: 1px solid #ccc;
+            padding: 5px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">Reçete No : MOCK001 | AHMET YILMAZ (DR)</div>
+
+    <div class="panel">
+        <div class="row">
+            <div class="label">T.C. Kimlik No (*):</div><input type="text" value="11111111111" disabled>
+            <div class="label" style="margin-left: 20px;">Hasta Türü:</div><input type="text" value="Emekli" disabled>
+        </div>
+        <div class="row">
+            <div class="label">Reçete Tarihi (*):</div><input type="text" value="15/10/2023" disabled>
+            <div class="label" style="margin-left: 20px;">Hasta Adı Soyadı :</div><input type="text"
+                value="MEHMET DEMIR" disabled>
+        </div>
+    </div>
+
+    <div class="header">İlaç Listesi</div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Barkod</th>
+                <th>Adı</th>
+                <th>Adet</th>
+                <th>Kullanım</th>
+                <th>Tutar</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>8699580090635</td> <!-- DOLARIT 300 MG -->
+                <td>DOLARIT 300 MG 10 FILM TABLET</td>
+                <td>1</td>
+                <td>2 x 1</td>
+                <td>45,00</td>
+            </tr>
+            <tr>
+                <td>8699591090341</td> <!-- DOLELAC 500 MG -->
+                <td>DOLELAC 500 MG FILM KAPLI TABLET</td>
+                <td>2</td>
+                <td>1 x 1</td>
+                <td>60,00</td>
+            </tr>
+            <tr>
+                <td>8699587351661</td> <!-- DOLGIT KREM -->
+                <td>DOLGIT %5 KREM (50 G)</td>
+                <td>1</td>
+                <td>3 x 1</td>
+                <td>25,00</td>
+            </tr>
+        </tbody>
+    </table>
+    <div style="margin-top: 20px;">
+        <a href="index.html">Ana Sayfa</a> | <a href="page2.html">Sayfa 2</a>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Medula Reçete - Mock Page 2</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 20px;
+        }
+
+        .header {
+            background-color: #d9534f;
+            color: white;
+            padding: 5px 10px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* Different Color */
+        .panel {
+            background-color: #fdf7f7;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .row {
+            display: flex;
+            margin-bottom: 5px;
+            align-items: center;
+        }
+
+        .label {
+            width: 150px;
+            font-weight: bold;
+        }
+
+        input {
+            border: 1px solid #999;
+            padding: 2px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            font-size: 12px;
+        }
+
+        th {
+            background-color: #d9534f;
+            color: white;
+            padding: 5px;
+            text-align: left;
+        }
+
+        td {
+            border: 1px solid #ccc;
+            padding: 5px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">Reçete No : MOCK002 | AYSE KAYA (DR)</div>
+
+    <div class="panel">
+        <div class="row">
+            <div class="label">T.C. Kimlik No (*):</div><input type="text" value="22222222222" disabled>
+            <div class="label" style="margin-left: 20px;">Hasta Türü:</div><input type="text" value="Çalışan" disabled>
+        </div>
+        <div class="row">
+            <div class="label">Reçete Tarihi (*):</div><input type="text" value="20/11/2023" disabled>
+            <div class="label" style="margin-left: 20px;">Hasta Adı Soyadı :</div><input type="text"
+                value="ZEYNEP CELIK" disabled>
+        </div>
+    </div>
+
+    <div class="header">İlaç Listesi</div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Barkod</th>
+                <th>Adı</th>
+                <th>Adet</th>
+                <th>Kullanım</th>
+                <th>Tutar</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>8699772519128</td> <!-- DOLINE SPREY -->
+                <td>DOLINE 100 MG 50 ML SPREY</td>
+                <td>1</td>
+                <td>Haricen</td>
+                <td>85,00</td>
+            </tr>
+            <tr>
+                <td>8699514340188</td> <!-- DOLOREX JEL -->
+                <td>DOLOREX %1 JEL (50 G)</td>
+                <td>1</td>
+                <td>3 x 1</td>
+                <td>40,00</td>
+            </tr>
+            <tr>
+                <td>8699772091464</td> <!-- DOLOSPAS -->
+                <td>DOLOSPAS FILM TABLET</td>
+                <td>2</td>
+                <td>1 x 1</td>
+                <td>55,00</td>
+            </tr>
+            <tr>
+                <td>8699536090078</td> <!-- DOLPHIN -->
+                <td>DOLPHIN 500 MG 10 FILM TABLET</td>
+                <td>1</td>
+                <td>2 x 1</td>
+                <td>30,00</td>
+            </tr>
+        </tbody>
+    </table>
+    <div style="margin-top: 20px;">
+        <a href="index.html">Ana Sayfa</a> | <a href="page1.html">Sayfa 1</a>
+    </div>
+</body>
+
+</html>

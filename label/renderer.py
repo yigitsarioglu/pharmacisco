@@ -41,7 +41,7 @@ class LabelRenderer:
         f_large_bold = QFont("Arial", 10, QFont.Bold)
         f_category = QFont("Arial", 9, QFont.Bold)
         
-        # --- 1. Top Row: Drug Name | Date ---
+        # --- 1. Top Row: Category (Was Drug Name) | Date ---
         # Height approx 12%
         y_cursor = 0
         h_row1 = h * 0.12
@@ -49,23 +49,24 @@ class LabelRenderer:
         
         p.setPen(c_black)
         p.setFont(f_std)
-        # Drug Name (Left)
-        p.drawText(r_row1, Qt.AlignLeft | Qt.AlignVCenter, data.get("drug_name", ""))
+        # Category (Left) - Swapped
+        p.drawText(r_row1, Qt.AlignLeft | Qt.AlignVCenter, data.get("category", "").upper())
         # Date (Right)
         p.drawText(r_row1, Qt.AlignRight | Qt.AlignVCenter, data.get("date", ""))
         
         y_cursor += h_row1
         
-        # --- 2. Category Bar (Black) ---
+        # --- 2. Drug Name Bar (Black) - Swapped ---
         # Height approx 12%
         h_cat = h * 0.12
         r_cat = QRectF(0, y_cursor, w, h_cat)
         p.fillRect(r_cat, c_black)
         
         p.setPen(c_white)
-        p.setFont(f_category)
-        category_text = data.get("category", "GENEL KULLANIM")
-        p.drawText(r_cat, Qt.AlignCenter, category_text)
+        # Make Drug Name larger in the strip
+        p.setFont(f_large_bold) 
+        drug_name_text = data.get("drug_name", "").upper()
+        p.drawText(r_cat, Qt.AlignCenter, drug_name_text)
         
         y_cursor += h_cat
         
