@@ -118,7 +118,7 @@ class LabelRenderer:
         # In image: "BİTİŞ TARİHİ" text
         p.setPen(QColor("#AAAAAA")) # Slightly dimmed
         p.setFont(QFont("Arial", 6))
-        p.drawText(QRectF(w/2, y_cursor, w/2 - m_side, h_info), Qt.AlignRight | Qt.AlignVCenter, "BİTİŞ TARİHİ")
+        p.drawText(QRectF(w/2, y_cursor, w/2 - m_side, h_info), Qt.AlignRight | Qt.AlignVCenter, "HASTA BİLGİSİ")
         
         y_cursor += h_info
         
