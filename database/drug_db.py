@@ -117,6 +117,21 @@ class DrugDatabase:
         except sqlite3.IntegrityError:
             return False
 
+    def update_drug_en(self, id, name_en, category_en, preg_cat, short_inst_en, full_inst_en):
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        try:
+            cursor.execute("""
+                UPDATE drugs 
+                SET name_en=?, category_en=?, pregnancy_category=?, short_instruction_en=?, full_instruction_en=?
+                WHERE id=?
+            """, (name_en, category_en, preg_cat, short_inst_en, full_inst_en, id))
+            conn.commit()
+            conn.close()
+            return True
+        except sqlite3.IntegrityError:
+            return False
+
     def delete_drug(self, id):
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()

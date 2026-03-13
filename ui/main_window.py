@@ -10,6 +10,7 @@ from ui.pages.manual_page import ManualPage
 from ui.pages.ocr_page import OCRPage
 from ui.pages.settings_page import SettingsPage
 from ui.pages.drug_manager_page import DrugManagerPage
+from ui.pages.drug_manager_page_en import DrugManagerPageEN
 from ui.pages.browser_page import BrowserPage
 
 class MainWindow(QMainWindow):
@@ -42,11 +43,16 @@ class MainWindow(QMainWindow):
         logo_area.setStyleSheet("background-color: #1A252F;")
         logo_layout = QVBoxLayout(logo_area)
         
-        # Draw Red 'E' Logo programmatically for now
+        # Load Custom Logo
         lbl_logo = QLabel()
         lbl_logo.setAlignment(Qt.AlignCenter)
-        logo_pix = self.create_logo_pixmap()
-        lbl_logo.setPixmap(logo_pix)
+        
+        logo_pix = QPixmap("icons/pharmacisco.png")
+        if not logo_pix.isNull():
+            lbl_logo.setPixmap(logo_pix.scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        else:
+            lbl_logo.setText("LOGO")
+            lbl_logo.setStyleSheet("color: white; font-weight: bold; font-size: 24px;")
         
         lbl_app = QLabel("PHARMACISCO")
         lbl_app.setAlignment(Qt.AlignCenter)
@@ -58,13 +64,15 @@ class MainWindow(QMainWindow):
         
         # 2. Navigation Buttons
         self.btn_manual = self.create_nav_btn("Manuel Etiket")
-        self.btn_manager = self.create_nav_btn("İlaç Yönetimi")
+        self.btn_manager = self.create_nav_btn("İlaç Yönetimi (TR)")
+        self.btn_manager_en = self.create_nav_btn("İlaç Yönetimi (EN)")
         self.btn_browser = self.create_nav_btn("Otomatik Browser")
         self.btn_ocr = self.create_nav_btn("Otomatik (OCR)")
         self.btn_settings = self.create_nav_btn("Ayarlar")
         
         sidebar_layout.addWidget(self.btn_manual)
         sidebar_layout.addWidget(self.btn_manager)
+        sidebar_layout.addWidget(self.btn_manager_en)
         sidebar_layout.addWidget(self.btn_browser)
         sidebar_layout.addWidget(self.btn_ocr)
         sidebar_layout.addStretch()
@@ -74,22 +82,25 @@ class MainWindow(QMainWindow):
         self.stack = QStackedWidget()
         self.page_manual = ManualPage()
         self.page_manager = DrugManagerPage()
+        self.page_manager_en = DrugManagerPageEN()
         self.page_browser = BrowserPage()
         self.page_ocr = OCRPage()
         self.page_settings = SettingsPage()
         
-        self.stack.addWidget(self.page_manual)   # 0
-        self.stack.addWidget(self.page_manager)  # 1
-        self.stack.addWidget(self.page_browser)  # 2
-        self.stack.addWidget(self.page_ocr)      # 3
-        self.stack.addWidget(self.page_settings) # 4
+        self.stack.addWidget(self.page_manual)      # 0
+        self.stack.addWidget(self.page_manager)     # 1
+        self.stack.addWidget(self.page_manager_en)  # 2
+        self.stack.addWidget(self.page_browser)     # 3
+        self.stack.addWidget(self.page_ocr)         # 4
+        self.stack.addWidget(self.page_settings)    # 5
         
         # Connections
         self.btn_manual.clicked.connect(lambda: self.switch_page(0))
         self.btn_manager.clicked.connect(lambda: self.switch_page(1))
-        self.btn_browser.clicked.connect(lambda: self.switch_page(2))
-        self.btn_ocr.clicked.connect(lambda: self.switch_page(3))
-        self.btn_settings.clicked.connect(lambda: self.switch_page(4))
+        self.btn_manager_en.clicked.connect(lambda: self.switch_page(2))
+        self.btn_browser.clicked.connect(lambda: self.switch_page(3))
+        self.btn_ocr.clicked.connect(lambda: self.switch_page(4))
+        self.btn_settings.clicked.connect(lambda: self.switch_page(5))
         
         main_layout.addWidget(sidebar)
         main_layout.addWidget(self.stack)
@@ -144,23 +155,8 @@ class MainWindow(QMainWindow):
     def switch_page(self, index):
         self.stack.setCurrentIndex(index)
         # Handle button styling
-        btns = [self.btn_manual, self.btn_manager, self.btn_browser, self.btn_ocr, self.btn_settings]
+        btns = [self.btn_manual, self.btn_manager, self.btn_manager_en, self.btn_browser, self.btn_ocr, self.btn_settings]
         for i, btn in enumerate(btns):
             btn.setChecked(i == index)
 
-    def create_logo_pixmap(self):
-        # Draw a Pharmacy 'E' Logo (Red E)
-        size = 80
-        pix = QPixmap(size, size)
-        pix.fill(Qt.transparent)
-        
-        p = QPainter(pix)
-        p.setRenderHint(QPainter.Antialiasing)
-        
-        # Red E styling
-        font = QFont("Arial", 60, QFont.Bold)
-        p.setFont(font)
-        p.setPen(QColor("#E74C3C")) # Red
-        p.drawText(QRectF(0, 0, size, size), Qt.AlignCenter, "E")
-        p.end()
-        return pix
+

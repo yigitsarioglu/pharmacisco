@@ -6,103 +6,84 @@ function scrapeData() {
         drugs: []
     };
 
-    // 1. Try to find Patient Name
-    // Strategy: Look for specific keywords or just generic 'Adı' labels
-    // This part matches the User's OCR image structure somewhat
-    // 1. Try to find Patient Name
-    // Refined to avoid "Dr. Adı/Soyadı"
     try {
-        let bodyText = document.body.innerText;
-        // Search specifically for lines starting with Hasta or labels
-        // The mock has: "Hasta Adı Soyadı :"
-        // The real Medula usually has "Hasta Adı Soyadı" or "TC Kimlik No" nearby.
-
-        // Regex Lookbehind/heuristic:
-        // Match "Hasta" followed by optional "Adı/Soyadı" then ":" then capture name
-        let nameMatch = bodyText.match(/Hasta\s*(?:Adı|Türü|Bilgisi)?[^:]*[:]\s*([A-ZÇĞİÖŞÜ\s]+)/i);
-
-        // Sometimes it's "Hasta Adı Soyadı : NAME" 
-        if (nameMatch) {
-            data.patient_name = nameMatch[1].trim();
-        } else {
-            // Fallback: look for generic "Adı Soyadı" BUT exclude if preceded by "Dr." or "Hekim"
-            // This is harder with regex alone on raw text. 
-            // Let's assume the previous regex works for "Hasta ... :"
-            data.patient_name = "Bilinmeyen Hasta (Bulunamadı)";
+        // 1. Hasta Adı / Soyadı Çıkarımı
+        // Medula'da Reçete Sahibi Adı: f:t15 ve f:t16 id'li span'lerde tutulur.
+        let nameSpan1 = document.getElementById("f:t15");
+        let nameSpan2 = document.getElementById("f:t16");
+        
+        // Eğer f:t15 yoksa (Teslim alan farklı vs), f:text40 ve f:text39'a da bakabiliriz.
+        if (!nameSpan1) {
+            nameSpan1 = document.getElementById("f:text40");
+            nameSpan2 = document.getElementById("f:text39");
         }
 
-        // Cleanup: remove "Normal" or other distraction if it grabbed the wrong field
-        if (data.patient_name === "Normal") {
-            // It grabbed "Hasta Türü : Normal"
-            // Try again for name specifically
-            let nameMatch2 = bodyText.match(/Hasta\s*Adı\s*Soyadı\s*[:]\s*([A-ZÇĞİÖŞÜ\s]+)/i);
-            if (nameMatch2) data.patient_name = nameMatch2[1].trim();
+        if (nameSpan1 && nameSpan2) {
+            data.patient_name = (nameSpan1.innerText.trim() + " " + nameSpan2.innerText.trim()).trim();
+        }
+
+        // 2. İlaçlar, Barkodlar ve Kullanım Dozajları (f:tbl1)
+        // Tablodaki her satırın indeksini dolaşıyoruz (0'dan başlayarak boş satır bulana kadar)
+        let i = 0;
+        while (true) {
+            let barcodeInput = document.getElementById(`f:tbl1:${i}:t1`);
+            
+            // Eğer Barkod inputu yoksa ilaç listesinin sonuna gelmişizdir.
+            if (!barcodeInput) break;
+
+            let barcode = barcodeInput.value ? barcodeInput.value.trim() : "";
+            
+            // Barkod hücresi boşsa, liste burada bitiyordur (silinmiş/boş bırakılmış satırlar olabilir)
+            if (barcode === "") {
+                i++;
+                continue;
+            }
+
+            let nameSpan = document.getElementById(`f:tbl1:${i}:t6`);
+            let name = nameSpan ? nameSpan.innerText.trim() : "Bilinmeyen İlaç";
+
+            // Kullanım (Periyot / Doz) Çıkarımı
+            // Örnek: t5 (Periyot Miktarı: 1), m1 (Periyot Tipi: Günde), t3 (Hangi sıklıkla: 2), t4 (Doz: 1,0)
+            let periodAmountInput = document.getElementById(`f:tbl1:${i}:t5`);
+            let periodTypeSelect = document.getElementById(`f:tbl1:${i}:m1`);
+            let freqInput = document.getElementById(`f:tbl1:${i}:t3`);
+            let doseInput = document.getElementById(`f:tbl1:${i}:t4`);
+
+            let usageStr = "";
+            if (periodAmountInput && periodTypeSelect && freqInput && doseInput) {
+                let periodAmount = periodAmountInput.value || "1";
+                // Select elementinden seçili metni bulalım
+                let periodType = "Günde";
+                if (periodTypeSelect.selectedIndex >= 0) {
+                    periodType = periodTypeSelect.options[periodTypeSelect.selectedIndex].text;
+                }
+                
+                let freq = freqInput.value || "1";       // Kaç kere (Örn: 2)
+                let dose = doseInput.value || "1.0";     // Kaç adet (Örn: 1,0)
+                
+                // Virgüllü ise daha temiz gözükmesi için örneğin 1,0 -> 1 yapabiliriz, ama şimdilik orijinal metni koruyoruz.
+                usageStr = `${periodAmount} ${periodType} ${freq} x ${dose} doz`;
+            }
+
+            // Listeye it
+            data.drugs.push({
+                name: name,
+                barcode: barcode,
+                usage: usageStr
+            });
+
+            i++;
         }
 
     } catch (e) {
-        console.log("Error extracting name", e);
+        console.error("Scraping error:", e);
     }
 
-    // 2. Try to find Drugs (Barcodes)
-    // Heuristic: Turkish Pharma barcodes are 13 digits, often starting with 869
-    // We walk through all elements/text to find these numbers
-
-    // Strategy: iterate table rows and look at specific CELLS
-    let rows = document.querySelectorAll("tr");
-
-    if (rows.length > 0) {
-        rows.forEach(row => {
-            let cells = row.querySelectorAll("td");
-            // We need at least 2 cells (Barcode + Name)
-            if (cells.length >= 2) {
-                // Find column with barcode
-                for (let i = 0; i < cells.length; i++) {
-                    let text = cells[i].innerText.trim();
-                    // Exact or close match for barcode
-                    if (/^869\d{10}$/.test(text)) {
-                        let barcode = text;
-
-                        // Assume Drug Name is in the NEXT column (i+1)
-                        if (i + 1 < cells.length) {
-                            let name = cells[i + 1].innerText.trim();
-
-                            // Small cleanup just in case
-                            // Remove any trailing parenthesis if they contain non-name info? 
-                            // Usually Medula name is clean in its own cell.
-
-                            data.drugs.push({
-                                name: name,
-                                barcode: barcode
-                            });
-                            break; // Found drug in this row, move to next row
-                        }
-                    }
-                }
-            } else {
-                // Fallback for non-table structure (e.g. divs) or if cells not found
-                // Try the text regex approach on the row text if cell approach failed?
-                // For now, let's stick to cell-based as it's cleaner for Medula.
-            }
-        });
-    }
-
-    // Fallback: If table approach yielded nothing, Regex the whole body text
-    if (data.drugs.length === 0) {
-        let bodyText = document.body.innerText;
-        let barcodeRegex = /(869\d{10})/g;
-        let matches = [...bodyText.matchAll(barcodeRegex)];
-
-        matches.forEach(m => {
-            // For each barcode, find surrounding text?? Hard to guess name.
-            // Just send barcode and let App resolve name from DB?
-            data.drugs.push({
-                name: "Veritabanından Bul",
-                barcode: m[1]
-            });
-        });
-    }
+    // Eğer DOM bazlı aramada hiçbir şey bulunamazsa, eski usul regex fallback yapılabilir, 
+    // Ancak orijinal Medula sayfasında yukarıdaki ID'ler standarttır.
 
     return data;
 }
 
+// Automatically trigger scrapeData and return
 scrapeData();

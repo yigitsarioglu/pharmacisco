@@ -1,10 +1,12 @@
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, 
-                               QTableWidget, QTableWidgetItem, QHeaderView, QMessageBox, QFrame)
+                               QTableWidget, QTableWidgetItem, QHeaderView, QMessageBox, QFrame,
+                               QGroupBox, QRadioButton)
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt, Slot, QTimer
 from utils.integration_server import IntegrationServer
 from database.drug_db import db
 from label.renderer import LabelRenderer
+from config.settings import cfg
 from datetime import datetime
 
 class BrowserPage(QWidget):
@@ -44,12 +46,42 @@ class BrowserPage(QWidget):
         
         left_layout.addWidget(top_bar)
         
+        # Instruction Source Selection
+        source_group = QGroupBox("Etikete Yazılacak Talimat Kaynağı")
+        source_group.setStyleSheet("font-weight: bold; color: #333;")
+        source_layout = QHBoxLayout(source_group)
+        
+        self.radio_doctor = QRadioButton("Doktor Talimatı (Medula)")
+        self.radio_db_short = QRadioButton("Veritabanı: Kısa Talimat")
+        self.radio_db_full = QRadioButton("Veritabanı: Uzun Talimat")
+        
+        # Load saved preference
+        pref = cfg.get("instruction_source")
+        if pref == "db_short":
+            self.radio_db_short.setChecked(True)
+        elif pref == "db_full":
+            self.radio_db_full.setChecked(True)
+        else:
+            self.radio_doctor.setChecked(True)
+            
+        self.radio_doctor.toggled.connect(self.on_source_changed)
+        self.radio_db_short.toggled.connect(self.on_source_changed)
+        self.radio_db_full.toggled.connect(self.on_source_changed)
+        
+        source_layout.addWidget(self.radio_doctor)
+        source_layout.addWidget(self.radio_db_short)
+        source_layout.addWidget(self.radio_db_full)
+        source_layout.addStretch()
+        
+        left_layout.addWidget(source_group)
+        
         # Table
         self.table = QTableWidget()
-        self.table.setColumnCount(5)
-        self.table.setHorizontalHeaderLabels(["Hasta Adı", "İlaç Adı", "Barkod", "Durum", "Talimat (DB Bulunan)"])
+        self.table.setColumnCount(6)
+        self.table.setHorizontalHeaderLabels(["Hasta Adı", "İlaç Adı", "Barkod", "Durum", "Doktor Talimatı", "Talimat (DB Bulunan)"])
         self.table.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch) # Drug Name
-        self.table.horizontalHeader().setSectionResizeMode(4, QHeaderView.Stretch) # Instruction
+        self.table.horizontalHeader().setSectionResizeMode(4, QHeaderView.Stretch) # Doctor Instruction
+        self.table.horizontalHeader().setSectionResizeMode(5, QHeaderView.Stretch) # Instruction DB
         self.table.setSelectionBehavior(QTableWidget.SelectRows)
         self.table.setSelectionMode(QTableWidget.ExtendedSelection)
         self.table.itemSelectionChanged.connect(self.update_preview)
@@ -107,6 +139,15 @@ class BrowserPage(QWidget):
         main_layout.addWidget(left_panel, 7)
         main_layout.addWidget(right_panel, 3)
 
+    def on_source_changed(self):
+        if self.radio_doctor.isChecked():
+            cfg.set("instruction_source", "doctor")
+        elif self.radio_db_short.isChecked():
+            cfg.set("instruction_source", "db_short")
+        elif self.radio_db_full.isChecked():
+            cfg.set("instruction_source", "db_full")
+        self.update_preview()
+
     def toggle_server(self):
         if self.server.running:
             self.server.stop_server()
@@ -131,6 +172,7 @@ class BrowserPage(QWidget):
         for d in drugs:
             name = d.get("name", "")
             barcode = d.get("barcode", "")
+            usage = d.get("usage", "")  # Medula'dan gelen doz/periyot bilgisi
             
             # Lookup in DB
             status = "❌ Bulunamadı"
@@ -152,16 +194,17 @@ class BrowserPage(QWidget):
                 status = "✅ Eşleşti"
                 instruction = rec[5] if rec[5] else ""
             
-            self.add_row(patient, name, barcode, status, instruction)
+            self.add_row(patient, name, barcode, status, usage, instruction)
             
-    def add_row(self, patient, drug, barcode, status, instruction):
+    def add_row(self, patient, drug, barcode, status, usage, instruction):
         row = self.table.rowCount()
         self.table.insertRow(row)
         self.table.setItem(row, 0, QTableWidgetItem(patient))
         self.table.setItem(row, 1, QTableWidgetItem(drug))
         self.table.setItem(row, 2, QTableWidgetItem(str(barcode)))
         self.table.setItem(row, 3, QTableWidgetItem(status))
-        self.table.setItem(row, 4, QTableWidgetItem(instruction))
+        self.table.setItem(row, 4, QTableWidgetItem(usage))
+        self.table.setItem(row, 5, QTableWidgetItem(instruction))
         
         # Color status
         if "✅" in status:
@@ -181,6 +224,7 @@ class BrowserPage(QWidget):
         patient = self.table.item(row, 0).text()
         drug_name_table = self.table.item(row, 1).text()
         barcode = self.table.item(row, 2).text()
+        doctor_usage = self.table.item(row, 4).text()
         
         # Fetch details from DB for full data (Category, Full Instruction)
         # We need to query again because table only shows short instruction
@@ -199,7 +243,7 @@ class BrowserPage(QWidget):
             "patient_name": patient,
             "date": datetime.now().strftime("%d.%m.%Y"),
             "category": "",
-            "short_instruction": "",
+            "short_instruction": doctor_usage if doctor_usage else "",  # Override with Medula instructions if available
             "full_instruction": "",
             "transaction_id": ""
         }
@@ -207,10 +251,19 @@ class BrowserPage(QWidget):
         if rec:
             # rec: (id, barcode, name, cat, preg, short, full)
             data["category"] = rec[3]
-            data["short_instruction"] = rec[5]
+            
+            # Use configured source for mapping instruction to label
+            if self.radio_doctor.isChecked():
+                data["short_instruction"] = doctor_usage if doctor_usage else rec[5]
+            elif self.radio_db_short.isChecked():
+                data["short_instruction"] = rec[5]
+            elif self.radio_db_full.isChecked():
+                data["short_instruction"] = rec[6]
+                
             data["full_instruction"] = rec[6]
         else:
             data["full_instruction"] = "Veritabanında bulunamadı."
+            data["short_instruction"] = doctor_usage
             
         # Render
         img = self.renderer.render_image(data)

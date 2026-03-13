@@ -1,5 +1,6 @@
 import sys
 import os
+import ctypes
 
 # Create missing packages if needed
 for d in ['utils', 'printer', 'input', 'drug_matcher', 'ocr']:
@@ -9,6 +10,7 @@ for d in ['utils', 'printer', 'input', 'drug_matcher', 'ocr']:
             pass
 
 from PySide6.QtWidgets import QApplication, QDialog
+from PySide6.QtGui import QIcon
 from ui.main_window import MainWindow
 from ui.license_dialog import LicenseDialog
 from ui.setup_dialog import SetupDialog
@@ -16,6 +18,15 @@ from licence.license_manager import check_license_status
 
 def main():
     app = QApplication(sys.argv)
+    
+    # Set Windows Taskbar Icon explicitly
+    try:
+        myappid = 'pharmacisco.desktop.app.1' 
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+    except:
+        pass
+        
+    app.setWindowIcon(QIcon("icons/pharmacisco.ico"))
     
     # 1. License Check
     status = check_license_status()
