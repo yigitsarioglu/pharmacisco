@@ -60,43 +60,97 @@ def verify_online(license_key, machine_id):
     ).execute()
     return response.data
 
-def verify_license(license_key):
+def activate_license(license_key, customer_name):
+    """Called when user manually types key and name in the UI
+    Returns: (success_bool, status_message_string)
+    """
     machine_id = get_machine_id()
     today = datetime.date.today()
 
     try:
-        # Online Verification attempt
-        result = verify_online(license_key, machine_id)
+        # First verify the customer name directly from the table
+        cust_check = supabase.table("licenses").select("customer_name, expiry_date").eq("license_key", license_key).execute()
+        if not cust_check.data:
+            return False, "Bu lisans anahtarı sistemde bulunamadı. Lütfen kontrol edin."
+            
+        real_customer = cust_check.data[0].get("customer_name", "")
+        expiry_date = cust_check.data[0].get("expiry_date", "")
+        
+        # Check Expiry explicitly here so we can give a good message before hardware lock issues
+        if expiry_date:
+            exp_d = datetime.date.fromisoformat(expiry_date)
+            if today > exp_d:
+                return False, f"Lisans süreniz {exp_d.strftime('%d.%m.%Y')} tarihinde dolmuştur. Lütfen yenileyiniz."
+                
+        if real_customer.strip().lower() != customer_name.strip().lower():
+            return False, "Sisteme kayıtlı eczane adı ile girdiğiniz ad eşleşmedi."
 
+        result = verify_online(license_key, machine_id)
         if result and result.get("valid"):
             cache = {
                 "license_key": license_key,
                 "machine_id": machine_id,
+                "customer_name": customer_name,
                 "last_verified": str(today),
                 "expiry_date": result["expiry_date"]
             }
             save_cache(cache)
-            return True
-        return False
+            return True, "Lisans başarıyla doğrulandı! Pharmacisco'ya hoş geldiniz."
+            
+        # If verify_online says false, it's either locked to another machine or generically invalid
+        return False, "Lisans anahtarı geçersiz veya başka bir bilgisayarda kullanılıyor."
+    except Exception as e:
+        print("Activation error:", e)
+        return False, "İnternet bağlantınız yok veya lisans sunucusuna ulaşılamıyor."
 
-    except Exception:
-        # Offline Mode fallback
-        cache = load_cache()
-        if not cache:
-            return False
-
-        last = datetime.date.fromisoformat(cache["last_verified"])
+def check_license_status():
+    """Called on app startup to check if we have a valid stored license.
+    Returns: {"valid": Bool, "customer_name": str, "expiry_date": str, "license_key": str}
+    """
+    cache = load_cache()
+    if not cache:
+        return {"valid": False}
         
-        # 1. Anti Time-travel check (if today is before last verified, user rolled back their clock)
-        if today < last:
-            return False
+    machine_id = get_machine_id()
+    if cache.get("machine_id") != machine_id:
+        return {"valid": False} # Copied to another PC
+        
+    today = datetime.date.today()
+    last = datetime.date.fromisoformat(cache["last_verified"])
+    
+    # 1. Anti Time-travel check
+    if today < last:
+        return {"valid": False}
 
-        # 2. 7-day offline check
-        delta = (today - last).days
-        if delta <= 7:
-            # Expiry date check
-            expiry = datetime.date.fromisoformat(cache["expiry_date"])
-            if today <= expiry:
-                return True
-
-        return False
+    # 2. Daily check / Offline tolerance
+    delta = (today - last).days
+    expiry = datetime.date.fromisoformat(cache["expiry_date"])
+    
+    # If expired completely
+    if today > expiry:
+        return {"valid": False}
+        
+    # ALWAYS attempt an online check first to catch revoked/modified licenses instantly
+    try:
+        # If internet is available, this will succeed
+        result = verify_online(cache["license_key"], machine_id)
+        if result and result.get("valid"):
+            # Internet OK, License OK on Server. Refresh cache timer.
+            cache["last_verified"] = str(today)
+            cache["expiry_date"] = result.get("expiry_date", cache["expiry_date"])
+            save_cache(cache)
+            return {"valid": True, "customer_name": cache.get("customer_name", "Bilinmiyor"), 
+                    "expiry_date": cache["expiry_date"], "license_key": cache["license_key"]}
+        else:
+            # Internet OK, but license is revoked or expired on the server!
+            return {"valid": False}
+            
+    except Exception:
+        # NO INTERNET CONNECTION (or Supabase is down)
+        # Fall back to our 3-day offline tolerance
+        if delta <= 3:
+            return {"valid": True, "customer_name": cache.get("customer_name", "Bilinmiyor"), 
+                    "expiry_date": cache["expiry_date"], "license_key": cache["license_key"]}
+        else:
+            # Offline for more than 3 days
+            return {"valid": False}

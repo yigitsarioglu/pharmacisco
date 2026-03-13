@@ -7,6 +7,8 @@ class AppConfig:
         self.defaults = {
             "pharmacy_name": "ALP ECZANESI",
             "pharmacy_phone": "0212 269 87 27",
+            "pharmacist_name": "",
+            "pharmacy_address": "",
             "printer_name": "Default",
             "label_width_mm": 60,
             "label_height_mm": 40

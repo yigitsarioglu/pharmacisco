@@ -1,8 +1,9 @@
 {
-    "pharmacy_name": "AS ECZANESI",
-    "pharmacy_phone": "0212 269 87 89",
+    "pharmacy_name": "Onur",
+    "pharmacy_phone": "0212 288 88 89",
+    "pharmacist_name": "Onur GÜLER",
+    "pharmacy_address": "maltepe mah. maltepe/istanbul",
     "printer_name": "Default",
     "label_width_mm": 60,
-    "label_height_mm": 40,
-    "pharmacist_name": "FERHAN SARIOĞLU"
+    "label_height_mm": 40
 }

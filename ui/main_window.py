@@ -1,8 +1,10 @@
 import sys
 from PySide6.QtWidgets import (QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, 
-                               QListWidget, QStackedWidget, QLabel, QPushButton, QFrame, QSizePolicy)
+                               QListWidget, QStackedWidget, QLabel, QPushButton, QFrame, QSizePolicy, QMessageBox)
 from PySide6.QtGui import QIcon, QPixmap, QPainter, QColor, QFont
-from PySide6.QtCore import Qt, QSize, QRectF
+from PySide6.QtCore import Qt, QSize, QRectF, QTimer
+
+from licence.license_manager import check_license_status
 
 from ui.pages.manual_page import ManualPage
 from ui.pages.ocr_page import OCRPage
@@ -94,6 +96,23 @@ class MainWindow(QMainWindow):
 
         # Start at Manual
         self.switch_page(0)
+        
+        # --- BACKGROUND LICENSE MONITORING ---
+        self.license_timer = QTimer(self)
+        self.license_timer.timeout.connect(self.monitor_license)
+        # Check every 5 minutes (5 * 60 * 1000 ms)
+        self.license_timer.start(300000)
+
+    def monitor_license(self):
+        """Runs every 5 minutes in the background to ensure license is still valid."""
+        status = check_license_status()
+        if not status.get("valid"):
+            self.license_timer.stop()
+            QMessageBox.critical(self, "Lisans İhlali", 
+                "Lisansınızın süresi dolmuş veya geçerliliğini yitirmiş.\n"
+                "Program güvenlik nedeniyle kapatılacaktır."
+            )
+            self.close()
 
     def create_nav_btn(self, text):
         btn = QPushButton(text)
