@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, 
-                               QLabel, QLineEdit, QTextEdit, QPushButton, QFormLayout, QFrame, QMessageBox)
+                               QLabel, QLineEdit, QTextEdit, QPushButton, QFormLayout, QFrame, QMessageBox, QComboBox)
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Slot, Qt
 
@@ -14,6 +14,7 @@ class ManualPage(QWidget):
         
         self.renderer = LabelRenderer()
         
+        self.current_record = None
         # Initial Data
         self.data = {
             "drug_name": "",
@@ -50,6 +51,10 @@ class ManualPage(QWidget):
         # Form
         form = QFormLayout()
         
+        self.cb_language = QComboBox()
+        self.cb_language.addItems(["Türkçe", "English", "Русский", "العربية"])
+        self.cb_language.currentIndexChanged.connect(self.fill_form_from_record)
+
         self.inp_name = QLineEdit()
         self.inp_patient = QLineEdit() # Initialized inp_patient
         self.inp_date = QLineEdit(self.data["date"])
@@ -67,6 +72,7 @@ class ManualPage(QWidget):
         self.inp_full.textChanged.connect(self.sync_data)
         
         form.addRow("Hasta Adı/Soyadı:", self.inp_patient)
+        form.addRow("Dil Seçimi:", self.cb_language)
         form.addRow("İlaç Adı:", self.inp_name)
         form.addRow("Tarih:", self.inp_date)
         form.addRow("Kategori:", self.inp_category)
@@ -110,15 +116,30 @@ class ManualPage(QWidget):
         
         res = db.search(q)
         if res:
-            rec = res[0]
-            # rec: id, barcode, name, cat, preg, short, full
-            # indices: 0, 1, 2, 3, 4, 5, 6
-            self.inp_name.setText(rec[2])
-            self.inp_category.setText(rec[3])
-            self.inp_short.setText(rec[5] if rec[5] else "")
-            self.inp_full.setText(rec[6] if rec[6] else "")
+            self.current_record = res[0]
+            self.fill_form_from_record()
         else:
             QMessageBox.information(self, "Bulunamadı", "İlaç bulunamadı.")
+
+    def fill_form_from_record(self):
+        if not self.current_record: return
+        rec = self.current_record
+        lang_idx = self.cb_language.currentIndex()
+        
+        name_cols = [2, 7, 8, 9]
+        cat_cols = [3, 10, 11, 12]
+        short_cols = [5, 13, 14, 15]
+        full_cols = [6, 16, 17, 18]
+        
+        name_val = rec[name_cols[lang_idx]] or rec[2]
+        cat_val = rec[cat_cols[lang_idx]] or rec[3]
+        short_val = rec[short_cols[lang_idx]] or rec[5] or ""
+        full_val = rec[full_cols[lang_idx]] or rec[6] or ""
+
+        self.inp_name.setText(name_val)
+        self.inp_category.setText(cat_val)
+        self.inp_short.setText(short_val)
+        self.inp_full.setText(full_val)
 
     def sync_data(self):
         self.data["drug_name"] = self.inp_name.text()

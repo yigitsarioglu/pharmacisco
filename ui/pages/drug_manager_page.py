@@ -2,6 +2,8 @@ from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QTableWidget, 
                                QLineEdit, QTextEdit, QPushButton, QFormLayout, QFrame, QMessageBox, QHeaderView, QLabel)
 from PySide6.QtCore import Qt
 from database.drug_db import db
+from utils.translate_db import force_retranslate_drug
+import threading
 
 class DrugManagerPage(QWidget):
     def __init__(self):
@@ -73,9 +75,15 @@ class DrugManagerPage(QWidget):
         btn_del.setStyleSheet("background-color: #dc3545; color: white; font-weight: bold;")
         btn_del.clicked.connect(self.delete_drug)
         
+        btn_retrans = QPushButton("Tercüme Yenile")
+        btn_retrans.setStyleSheet("background-color: #17a2b8; color: white; font-weight: bold;")
+        btn_retrans.setToolTip("İlacın İngilizce, Rusça, Arapça çevirilerini Google'dan baştan çeker")
+        btn_retrans.clicked.connect(self.retranslate_drug)
+
         btn_layout.addWidget(btn_new)
         btn_layout.addWidget(btn_save)
         btn_layout.addWidget(btn_del)
+        btn_layout.addWidget(btn_retrans)
         
         right_layout.addWidget(lbl_head)
         right_layout.addLayout(form_layout)
@@ -168,3 +176,28 @@ class DrugManagerPage(QWidget):
             db.delete_drug(self.selected_id)
             self.clear_form()
             self.load_data()
+
+    def retranslate_drug(self):
+        if not self.selected_id:
+            QMessageBox.warning(self, "Uyarı", "Lütfen listeden bir ilaç seçin.")
+            return
+        
+        reply = QMessageBox.question(
+            self, "Emin Misiniz?",
+            "Bu ilacın İngilizce, Rusça ve Arapça çevirileri sıfırlanıp Google Translate üzerinden yeniden oluşturulacak. \n\nEğer Türkçe talimatta değişiklik yaptıysanız öncelikle 'Kaydet' butonuna basmanız gerekmektedir. Devam edilsin mi?",
+            QMessageBox.Yes | QMessageBox.No
+        )
+        
+        if reply == QMessageBox.Yes:
+            # We run it in a thread so UI doesn't freeze waiting for API
+            def run_translate():
+                try:
+                    force_retranslate_drug(self.selected_id)
+                    # Use a safe way or just print success, qt cross-thread can be tricky
+                    print("Çeviri başarıyla güncellendi.")
+                except Exception as e:
+                    print("Çeviri hatası:", e)
+            
+            t = threading.Thread(target=run_translate)
+            t.start()
+            QMessageBox.information(self, "Bilgi", "Seçili ilacın çeviri/güncelleme işlemi arka planda başlatıldı. Veritabanına anında yansıyacaktır.")
