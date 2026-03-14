@@ -6,3 +6,6 @@ __pycache__/
 .DS_Store
 *.db
 license_cache.dat
+dist/
+build/
+*.spec

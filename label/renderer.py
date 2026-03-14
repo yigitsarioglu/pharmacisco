@@ -20,6 +20,13 @@ class LabelRenderer:
         painter.end()
         return image
 
+    def paint_on_printer(self, p: QPainter, data: dict):
+        # We query the printer device context for its absolute pixel width and height.
+        # This will scale natively based on the physical DPI of the configured Windows driver.
+        w = p.device().width()
+        h = p.device().height()
+        self.paint(p, data, w, h)
+
     def paint(self, p: QPainter, data: dict, w: int, h: int):
         # Colors
         c_yellow = QColor("#FFFF00") # Main bg

@@ -1,0 +1,30 @@
+SON KULLANICI LİSANS SÖZLEŞMESİ (EULA)
+
+Lütfen bu yazılımı kurmadan veya kullanmadan önce aşağıdaki şartları dikkatlice okuyunuz. Pharmacisco ("Yazılım") kurulumunu gerçekleştirerek veya kullanarak bu sözleşmenin şartlarını kabul etmiş sayılırsınız. Eğer bu şartları kabul etmiyorsanız, kurulum işlemini iptal ediniz ve yazılımı kullanmayınız.
+
+1. LİSANS VERME
+Yazılımın geliştiricisi (Yiğit Sarıoğlu / Pharmacisco), size bu yazılımı, satın alınan lisans anahtarında belirtilen süre ve kapsam dahilinde, yalnızca ticari veya kişisel kullanımınız için kurma ve kullanma hakkı veren devredilemez, münhasır olmayan, sınırlı bir lisans sağlamaktadır.
+Lisans anahtarı kurulan bilgisayarın donanım kimliğine (Hardware ID) kilitlenmektedir.
+
+2. KISITLAMALAR
+Kullanıcı şunları yapamaz:
+a. Yazılımı, kaynak kodunu veya temel algoritmalarını tersine mühendislik (reverse engineering), koda dönüştürme (decompiling) veya parçalara ayırma (disassembling) işlemlerine tabi tutamaz.
+b. Yazılımın tamamını veya bir kısmını kiralamak, satmak, alt lisanslamak veya yetkisiz üçüncü şahıslara kopyalamak.
+c. Yazılımdaki lisans doğrulama sistemlerini, şifrelemeleri veya güvenlik önlemlerini atlatmaya çalışmak.
+d. Yazılımın herhangi bir bileşenini kullanarak rekabetçi bir yazılım veya sistem oluşturmak.
+
+3. GİZLİLİK VE VERİ KULLANIMI
+Yazılım, hasta verilerini ve eczane bilgilerini kendi yerel veritabanınıza (SQLite) güvenli bir şekilde kaydeder. Pharmacisco, sadece "lisans kontrolü" sağlamak amacıyla; Eczane Adı, Donanım Kimliği ve Lisans Anahtarı verilerini bulut sunucusunda eşleştirir. Hastalara ait T.C. Kimlik numarası, Reçete verileri veya sağlık bilgileri HİÇBİR ŞEKİLDE Pharmacisco sunucularına toplanmaz, analiz edilmez veya 3. şahıslarla paylaşılmaz. Tüm veri güvenliği doğrudan kullanıcının kendi bilgisayarının sorumluluğundadır.
+
+4. GARANTİ REDDİ
+Bu yazılım "olduğu gibi" sağlanmaktadır. Geliştirici, yazılımın hatasız olduğu veya kesintisiz çalışacağı garantisi vermez. Tıbbi bilgi, etiketleme veya reçete işlemlerinde oluşabilecek veri kaybı, dozaj yazım hataları veya sistemsel aksaklıklardan doğacak doğrudan veya dolaylı maddi ve manevi zararlardan geliştirici sorumlu tutulamaz. Son tıbbi doğrulama sorumluluğu her zaman ilacı sisteme giren/veren yetkili sağlık profesyoneline (Eczacı) aittir.
+
+5. GÜNCELLEMELER VE DESTEK
+Geliştirici, yazılıma yönelik olarak güncellemeler, hata düzeltmeleri veya destek sağlama hakkını saklı tutar, ancak bunları sağlama yükümlülüğü bulunmamaktadır. Aktif lisans süresi boyunca sağlanan güncellemeler kullanıcıya sunulabilir.
+
+6. SÖZLEŞMENİN FESHİ
+Bu sözleşme şartlarından herhangi birinin ihlal edilmesi veya yazılımın yasadışı amaçlarla kullanılması durumunda, geliştirici herhangi bir geri ödeme yapmaksızın lisans anahtarını iptal etme veya bu sözleşmeyi tek taraflı feshetme hakkını saklı tutar.
+
+Bu sözleşme, kurulum yapıldığı tarihten itibaren geçerli olup, lisans süresi bitene veya iptal edilene kadar yürürlükte kalacaktır.
+
+Pharmacisco © 2026. Tüm hakları saklıdır.

@@ -6,6 +6,7 @@ from PySide6.QtCore import Slot, Qt
 from config.settings import cfg
 from database.drug_db import db
 from label.renderer import LabelRenderer
+from printer.driver import PrinterManager
 from datetime import datetime
 
 class ManualPage(QWidget):
@@ -159,7 +160,13 @@ class ManualPage(QWidget):
              self.lbl_preview.setPixmap(pix.scaledToWidth(w, Qt.SmoothTransformation))
 
     def do_print(self):
-        QMessageBox.information(self, "Yazdır", "Etiket yazıcı kuyruğuna gönderildi.")
+        pm = PrinterManager()
+        printer_name = cfg.get("printer_name")
+        success = pm.print_label(self.data, printer_name)
+        if success:
+            QMessageBox.information(self, "Yazdır", f"Etiket {printer_name} adlı yazıcıya gönderildi.")
+        else:
+            QMessageBox.warning(self, "Yazdır", "Etiket yazdırılamadı. Ayarları kontrol edin.")
 
     def refresh_settings(self):
         # Called when switching to this page or init

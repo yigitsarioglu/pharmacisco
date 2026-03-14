@@ -1,6 +1,8 @@
 from PySide6.QtPrintSupport import QPrinter, QPrintDialog, QPrinterInfo
-from PySide6.QtGui import QPainter, QPageSize
+from PySide6.QtGui import QPainter, QPageSize, QPageLayout
+from PySide6.QtCore import QSizeF, QMarginsF
 from label.renderer import LabelRenderer
+from config.settings import cfg
 
 class PrinterManager:
     def __init__(self):
@@ -18,14 +20,16 @@ class PrinterManager:
         if printer_name:
             printer.setPrinterName(printer_name)
         
-        # Setup page size (Custom 60x40mm)
-        # Note: Qt handling of custom page sizes can be tricky on Windows without correct driver settings.
-        # We try to set it, but user driver preferences often override.
-        page_size = QPageSize(QSize(60, 40), QPageSize.Millimeter)
+        # Setup page size from Config (default 60x40mm)
+        w = float(cfg.get("label_width_mm") or 60.0)
+        h = float(cfg.get("label_height_mm") or 40.0)
+        
+        page_size = QPageSize(QSizeF(w, h), QPageSize.Unit.Millimeter)
         printer.setPageSize(page_size)
         
-        # Setup margins to 0, we handle margins in renderer
-        printer.setPageMargins(0, 0, 0, 0, QPrinter.Millimeter)
+        
+        margin = QMarginsF(0, 0, 0, 0)
+        printer.setPageMargins(margin, QPageLayout.Unit.Millimeter)
         
         painter = QPainter()
         if not painter.begin(printer):

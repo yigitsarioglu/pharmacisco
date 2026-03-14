@@ -6,6 +6,7 @@ from PySide6.QtCore import Qt, Slot, QTimer
 from utils.integration_server import IntegrationServer
 from database.drug_db import db
 from label.renderer import LabelRenderer
+from printer.driver import PrinterManager
 from config.settings import cfg
 from datetime import datetime
 
@@ -212,14 +213,7 @@ class BrowserPage(QWidget):
         else:
             self.table.item(row, 3).setForeground(Qt.red)
 
-    def update_preview(self):
-        selected_items = self.table.selectedItems()
-        if not selected_items:
-            self.lbl_preview.clear()
-            return
-            
-        row = selected_items[0].row()
-        
+    def _get_row_data(self, row):
         # Get data from table
         patient = self.table.item(row, 0).text()
         drug_name_table = self.table.item(row, 1).text()
@@ -243,7 +237,7 @@ class BrowserPage(QWidget):
             "patient_name": patient,
             "date": datetime.now().strftime("%d.%m.%Y"),
             "category": "",
-            "short_instruction": doctor_usage if doctor_usage else "",  # Override with Medula instructions if available
+            "short_instruction": doctor_usage if doctor_usage else "",
             "full_instruction": "",
             "transaction_id": ""
         }
@@ -265,6 +259,17 @@ class BrowserPage(QWidget):
             data["full_instruction"] = "Veritabanında bulunamadı."
             data["short_instruction"] = doctor_usage
             
+        return data
+
+    def update_preview(self):
+        selected_items = self.table.selectedItems()
+        if not selected_items:
+            self.lbl_preview.clear()
+            return
+            
+        row = selected_items[0].row()
+        data = self._get_row_data(row)
+        
         # Render
         img = self.renderer.render_image(data)
         pix = QPixmap.fromImage(img)
@@ -277,7 +282,17 @@ class BrowserPage(QWidget):
     def print_all(self):
         count = self.table.rowCount()
         if count == 0: return
-        QMessageBox.information(self, "Yazdır", f"{count} adet etiket yazıcıya gönderiliyor...")
+        
+        pm = PrinterManager()
+        printer_name = cfg.get("printer_name")
+        success = 0
+        
+        for row in range(count):
+            data = self._get_row_data(row)
+            if pm.print_label(data, printer_name):
+                success += 1
+                
+        QMessageBox.information(self, "Yazdır", f"{count} adet etiket yazıcıya gönderildi! ({success} başarılı).")
 
     def clear_table(self):
         self.table.setRowCount(0)

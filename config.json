@@ -1,10 +1,10 @@
 {
-    "pharmacy_name": "",
-    "pharmacy_phone": "",
-    "pharmacist_name": "",
+    "pharmacy_name": "ALP ECZANESİ",
+    "pharmacy_phone": "0212 269 87 27",
+    "pharmacist_name": "YİĞİT SARIOĞLU",
     "pharmacy_address": "",
-    "printer_name": "Default",
+    "printer_name": "Microsoft Print to PDF",
     "label_width_mm": 60,
     "label_height_mm": 40,
-    "instruction_source": "db_full"
+    "instruction_source": "doctor"
 }

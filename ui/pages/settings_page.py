@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QFormLayout, QLineEdit, 
-                               QPushButton, QLabel, QMessageBox, QFrame)
+                               QPushButton, QLabel, QMessageBox, QFrame, QComboBox)
 from config.settings import cfg
+import win32print
 
 class SettingsPage(QWidget):
     def __init__(self):
@@ -32,6 +33,28 @@ class SettingsPage(QWidget):
         form_layout.addRow("Adres:", self.inp_address)
         
         layout.addWidget(form_frame)
+        
+        # --- Printer Settings ---
+        lbl_printer = QLabel("Yazıcı Ayarları")
+        lbl_printer.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 10px; margin-top: 10px;")
+        layout.addWidget(lbl_printer)
+        
+        print_frame = QFrame()
+        print_frame.setStyleSheet("background-color: white; border-radius: 5px; padding: 10px;")
+        print_layout = QFormLayout(print_frame)
+        
+        self.combo_printer = QComboBox()
+        self.refresh_printers()
+            
+        self.inp_width = QLineEdit()
+        self.inp_height = QLineEdit()
+        
+        print_layout.addRow("Yazıcı Seçimi:", self.combo_printer)
+        print_layout.addRow("Etiket Genişliği (mm):", self.inp_width)
+        print_layout.addRow("Etiket Yüksekliği (mm):", self.inp_height)
+        
+        layout.addWidget(print_frame)
+        layout.addSpacing(15)
         
         # Save Button
         btn_save = QPushButton("Ayarları Kaydet")
@@ -73,10 +96,19 @@ class SettingsPage(QWidget):
         layout.addStretch()
 
     def load_settings(self):
-        self.inp_pharmacy.setText(cfg.get("pharmacy_name"))
-        self.inp_phone.setText(cfg.get("pharmacy_phone"))
+        self.inp_pharmacy.setText(cfg.get("pharmacy_name") or "")
+        self.inp_phone.setText(cfg.get("pharmacy_phone") or "")
         self.inp_pharmacist.setText(cfg.get("pharmacist_name") or "")
         self.inp_address.setText(cfg.get("pharmacy_address") or "")
+        
+        self.inp_width.setText(str(cfg.get("label_width_mm") or 60))
+        self.inp_height.setText(str(cfg.get("label_height_mm") or 40))
+        
+        saved_printer = cfg.get("printer_name")
+        if saved_printer:
+            idx = self.combo_printer.findText(saved_printer)
+            if idx >= 0:
+                self.combo_printer.setCurrentIndex(idx)
 
     def save_settings(self):
         cfg.set("pharmacy_name", self.inp_pharmacy.text())
@@ -84,4 +116,37 @@ class SettingsPage(QWidget):
         cfg.set("pharmacist_name", self.inp_pharmacist.text())
         cfg.set("pharmacy_address", self.inp_address.text())
         
+        cfg.set("printer_name", self.combo_printer.currentText())
+        
+        try:
+            w = int(self.inp_width.text())
+            h = int(self.inp_height.text())
+            cfg.set("label_width_mm", w)
+            cfg.set("label_height_mm", h)
+        except ValueError:
+            QMessageBox.warning(self, "Hata", "Lütfen en ve boy değerlerini rakam olarak giriniz.")
+            return
+            
+            
         QMessageBox.information(self, "Başarılı", "Ayarlar kaydedildi.")
+
+    def refresh_printers(self):
+        current_printer = cfg.get("printer_name")
+        self.combo_printer.clear()
+        
+        try:
+            # PRINTER_ENUM_LOCAL | PRINTER_ENUM_CONNECTIONS
+            printers = [p[2] for p in win32print.EnumPrinters(6)]
+            self.combo_printer.addItems(printers)
+        except Exception as e:
+            print("Yazici listesi alinamadi:", e)
+            self.combo_printer.addItem("Default")
+            
+        if current_printer:
+            idx = self.combo_printer.findText(current_printer)
+            if idx >= 0:
+                self.combo_printer.setCurrentIndex(idx)
+
+    def showEvent(self, event):
+        self.refresh_printers()
+        super().showEvent(event)

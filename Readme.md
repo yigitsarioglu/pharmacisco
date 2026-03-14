@@ -17,6 +17,7 @@ Yardımcı komutlar (Venv aktifken çalıştırın):
 - lisans üretmek için: python utils/generate_license.py
 - lisans doğrulamak için: python utils/verify_license.p
 - veritabanı şeması güncellemesi için: python utils/update_db_schema.py 
+- programı derlemek için (exe dosyası oluşturmak için): python utils/build.bat   
 
 
 Virtual environment kurulumu:
