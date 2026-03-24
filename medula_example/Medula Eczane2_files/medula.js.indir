@@ -1,0 +1,100 @@
+var inps = new Array();
+var c = 0;
+
+function oo(event)
+{
+      try
+      {
+            if(event.which == 13)
+            {
+                  var i = 0;
+                  for(i = 0; i < inps.length; i++)
+                  {
+                        if(document.getElementById(inps[i]).tabIndex == this.tabIndex + 1)
+                        {
+                             document.getElementById(inps[i]).focus();
+                             break;
+                        }
+                  }
+                  return false;
+            }
+      }
+      catch (e) 
+      {
+      }
+}
+
+function getChildsOfElement(el)
+{
+      var ii = el.childNodes;
+      var i = 0;
+      for(i = 0; i < ii.length; i++)
+      {
+            if(ii[i].tagName == "input" || ii[i].tagName == "INPUT" || ii[i].tagName == "select" || ii[i].tagName == "SELECT" || ii[i].tagName == "button" || ii[i].tagName == "BUTTON" || ii[i].tagName == "submit" || ii[i].tagName == "SUBMIT")
+            {
+                  if(ii[i].type != 'hidden' && ii[i].type != 'HIDDEN' && ii[i].type != 'image' && ii[i].type != 'IMAGE' && ii[i].type != 'file' && ii[i].type != 'FILE' && !ii[i].disabled)
+                  {
+                             ii[i].tabIndex = c;
+                             inps[c] = ii[i].id;
+                             c++;
+                             ii[i].onkeypress = oo;
+                  }
+            }
+            else
+            {
+                  getChildsOfElement(ii[i]);
+            }
+      }
+}
+
+function getChildsOfElement2(el)
+{
+      var ii = el.childNodes;
+      var p = 0;
+      for(p = 0; p < ii.length; p++)
+      {
+            if(ii[p].tagName == "input" || ii[p].tagName == "INPUT" || ii[p].tagName == "select" || ii[p].tagName == "SELECT" || ii[p].tagName == "button" || ii[p].tagName == "BUTTON" || ii[p].tagName == "submit" || ii[p].tagName == "SUBMIT")
+            {
+                  if(ii[p].type != 'hidden' && ii[p].type != 'HIDDEN' && ii[p].type != 'image' && ii[p].type != 'IMAGE' && ii[p].type != 'file' && ii[p].type != 'FILE' && !ii[p].disabled)
+                  {
+                             ii[p].tabIndex = c;
+                             inps[c] = ii[p].id;
+                             c++;
+                             ii[p].onkeypress = function() {if(event.keyCode == 13){var i = 0;for(i = 0; i < inps.length; i++){if(document.getElementById(inps[i]).tabIndex == this.tabIndex + 1){document.getElementById(inps[i]).focus();break;}}return false;}};
+                  }
+            }
+            else
+            {
+                  getChildsOfElement2(ii[p]);
+            }
+      }
+}
+
+function focuslan(id) {
+	document.getElementById(id).focus();
+}
+
+function onkeydawn() {    
+//	if (event.keyCode==13) {event.keyCode=9; return event.keyCode; }
+}
+
+function onlood() {
+
+      var ua = navigator.userAgent.toLowerCase();
+      if ( ua.indexOf( "opera" ) != -1 ) {
+          getChildsOfElement(document.body);
+      } else if ( ua.indexOf( "msie" ) != -1 ) {
+          getChildsOfElement2(document.body);
+      } else if ( ua.indexOf( "safari" ) != -1 ) {
+          getChildsOfElement(document.body);
+      } else if ( ua.indexOf( "mozilla" ) != -1 ) {
+	      if ( ua.indexOf( "firefox" ) != -1 ) {
+	          getChildsOfElement(document.body);
+	      } else {
+	         getChildsOfElement(document.body);
+	      }
+      } else {
+    	  getChildsOfElement(document.body);
+      }
+      
+}

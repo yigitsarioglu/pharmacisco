@@ -1,0 +1,1570 @@
+HxG_6.prototype.JSFBehavior=function () {
+this.beforeOthers=true;
+this.suppressAttach=false;
+}
+HxG_6.prototype.JSFBehavior.prototype.onPageLoad=function () {
+this.setEvent();
+return true;
+}
+HxG_6.prototype.JSFBehavior.prototype.setAttribute=function(a) {
+hX_6.parseArg (this.attributeTable, this, (arguments.length>1)?arguments:a);
+if (this.setAttributeCode) this.setAttributeCode();
+return true;
+}
+HxG_6.prototype.JSFBehavior.prototype.getAttribute=function (attribute) {
+return (hX_6.getArg(this.attributeTable, this, attribute));
+}
+HxG_6.prototype.JSFBehavior.prototype.setEvent=function () {
+if (this.DOMobj != null) {
+if (!this.HTMLrendered && !(this.eventname==hX_6._onL || this.suppressAttach)) {
+if (!this.beforeOthers) hX_6.attachBehaviorEvent(this.DOMobj, this.type, this.eventname, hX_6._lN);
+else hX_6.attachBehaviorEvent(this.DOMobj, this.type, this.eventname, hX_6._lP);
+}
+if (this.setEventCode) this.setEventCode();
+this.HTMLrendered=true;
+return true;
+}
+return false;
+}
+HxG_6.prototype.JSFBehavior.prototype.destroy=function () {
+var e,i,d=[this.actions,this.targets];
+if (this.destroyCode) this.destroyCode();
+if (this.extraEvents) {
+while (this.extraEvents.length > 0) {
+e=this.extraEvents.pop();
+hX_6.removeEvent(e[0],e[1],null,true);
+}
+delete this.extraEvents;
+}
+if (this.extraIds) {
+while (this.extraIds.length > 0) {
+e=this.extraIds.pop();
+hX_6.removeEvent(e[0],e[1],e[2]);
+}
+delete this.extraIds;
+}
+for (i=0; i<d.length; i++) {
+if (d[i]) {
+while (d[i].length>0) d[i].pop();
+delete d[i];
+}
+}
+delete d;
+if (this.attributeTable) delete this.attributeTable;
+return true;
+}
+HxG_6.prototype.JSFBehaviorGeneric=function () {
+this.type=hX_6.BHR_generic;
+this.beforeOthers=false;
+this.fcn=null;
+this.actions= [];
+this.targets= [];
+this.attributeTable=[];
+this.attributeTable ['action']=['actions',	hX_6.ARG_TO_NAU,	false,	null,	null];
+this.attributeTable ['function']=['fcn',		hX_6.ARG_TO_FCNS,	false,	null,	null];
+this.attributeTable ['target']=['targets',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.setAttribute(arguments);
+}
+HxG_6.prototype.JSFBehaviorGeneric.prototype=new hX_6.JSFBehavior();
+HxG_6.prototype.JSFBehaviorGeneric.prototype.setEventCode=function() {
+if (!this.HTMLrendered && this.eventname == hX_6._onL) {
+var evt;
+if (document.createEventObject!=undefined) {
+evt=document.createEventObject();
+evt.type=hX_6._onL;
+} else {
+evt=document.createEvent("HTMLEvents");
+evt.initEvent(hX_6._onL, true, true);
+}
+return hX_6.action.processAction(this.DOMobj, evt, this.fcn, this.actions, true, this.targets, null, null, null);
+}
+return true;
+}
+HxG_6.prototype.JSFBehaviorGeneric.prototype.dispatchBehavior=function (thisObj, evt) {
+return ((this.DOMobj != null) && (evt != null)) ? hX_6.action.processAction(this.DOMobj, evt, this.fcn, this.actions, true, this.targets, null, null, null) : true;
+}
+HxG_6.prototype.JSFBehaviorKeybind=function () {
+this.type=hX_6.BHR_keybind;
+this.keyArray=[];
+this.keyCode=this.modifier=this.fcn=null;
+this.actions= [];
+this.targets= [];
+this.cancelBubble=true;
+this.retainFocus=false;
+this.coBehavior=-1;
+this.attributeTable=[];
+this.attributeTable ['keycode']=['keyCode',	hX_6.ARG_TO_NUM,	false,	1,		999999];
+this.attributeTable ['modifier']=['modifier',	hX_6.ARG_TO_NAU,	false,	null,	null];
+this.attributeTable ['action']=['actions',	hX_6.ARG_TO_NAU,	false,	null,	null];
+this.attributeTable ['function']=['fcn',		hX_6.ARG_TO_FCNS,	false,	null,	null];
+this.attributeTable ['target']=['targets',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['cancel-bubble']=['cancelBubble',	hX_6.ARG_IS_TRUE,	false,	null,	null];
+this.attributeTable ['retain-focus']=['retainFocus',	hX_6.ARG_IS_TRUE,	false,	null,	null];
+this.setAttribute(arguments);
+}
+HxG_6.prototype.JSFBehaviorKeybind.prototype=new hX_6.JSFBehavior();
+HxG_6.prototype.JSFKey=function () {
+this.keyCode=null;
+this.modAlt=this.modShift=this.modCtrl=false;
+this.actions=this.targets=this.fcn=null;
+this.cancelBubble=true;
+this.retainFocus=false;
+}
+HxG_6.prototype.JSFBehaviorKeybind.prototype.addSubComponent=function(obj) {
+var sub=new hX_6.JSFKey();
+sub.keyCode=obj.keyCode;
+if (obj.modifier) {
+obj.modifier=obj.modifier;
+sub.modAlt=(obj.modifier.indexOf("ALT") >= 0);
+sub.modShift= (obj.modifier.indexOf("SHIFT") >= 0);
+sub.modCtrl=(obj.modifier.indexOf("CTRL") >= 0);
+}
+if (obj.actions)		sub.actions=obj.actions;
+if (obj.targets)		sub.targets=obj.targets;
+if (obj.fcn) 			sub.fcn=obj.fcn;
+if (obj.cancelBubble)	sub.cancelBubble= obj.cancelBubble;
+if (obj.retainFocus)	sub.retainFocus=obj.retainFocus;
+this.keyArray.push(sub);
+if (obj.keyCode == 112) document.onhelp=function () { return false; }
+}
+HxG_6.prototype.JSFBehaviorKeybind.prototype.setEventCode=function () {
+if (!this.HTMLrendered)
+if (hX_6.brw.isNavOrMoz()) hX_6.attachBehaviorEvent(this.DOMobj, this.type, hX_6._onKP, hX_6._lN, hX_6._onKD);
+}
+HxG_6.prototype.JSFBehaviorKeybind.prototype.setAttributeCode=function() {
+var obj, i, found=false;
+for (i=0; i < this.keyArray.length; i++) {
+obj=this.keyArray[i];
+if (obj.keyCode==this.keyCode && (this.modifier==null || (this.modifier!= null && obj.modifier && obj.modifier==this.modifier))) {
+found=true;
+if (this.actions)		obj.actions=this.actions;
+if (this.targets)		obj.targets=this.targets;
+if (this.fcn) 			obj.fcn=this.fcn;
+if (this.cancelBubble)	obj.cancelBubble= this.cancelBubble;
+if (this.retainFocus)	obj.retainFocus=this.retainFocus;
+}
+}
+if (!found) this.addSubComponent(this);
+}
+HxG_6.prototype.isKeyBound=function(obj, keyname, evt, action, action1, action2) {
+if (obj != null && keyname != null && this.isString(keyname)) {
+var a, b, c, s, i, j, k, objid;
+for (i=0; i < 2; i++) {
+objid=(i==0) ? ((obj.tagName != hX_6._FRM) ? obj.id : null) : ((obj.form != null && obj.form.tagName == hX_6._FRM) ? obj.form.id : null)
+b=(objid != null) ? (this.getBehaviorById(objid, hX_6.BHR_keybind, hX_6._evKD)) : null;
+b=(b != null) ? b : this.getBehaviorById(objid, hX_6.BHR_keybind, hX_6._evKP);
+if (b != null) {
+for (k=0; k < b.keyArray.length; k++) {
+if (b.keyArray[k].keyCode == keyname)
+if (evt == null)
+return true;
+else {
+a=((evt.altKey) ? true : false), c=((evt.ctrlKey) ? true : false), s=((evt.shiftKey) ? true : false);
+if ((a == b.keyArray[k].modAlt) && (s == b.keyArray[k].modShift) && (c == b.keyArray[k].modCtrl)) {
+if (action) {
+for (j=0;j<b.keyArray[k].actions.length;j++) {
+if (action==b.keyArray[k].actions[j]) return true;
+if (action1!=null && action1==b.keyArray[k].actions[j]) return true;
+if (action2!=null && action2==b.keyArray[k].actions[j]) return true;
+}
+return false;
+}
+return true;
+}
+}
+}
+}
+}
+}
+return (false);
+}
+HxG_6.prototype.JSFBehaviorKeybind.prototype.destroyCode=function () {
+var o;
+while (this.keyArray.length>0) {
+o=this.keyArray.pop();
+delete o;
+}
+}
+HxG_6.prototype.JSFBehaviorKeybind.prototype.dispatchBehavior=function (thisObj, evt) {
+var result=true;
+if ((this.DOMobj != null) && (evt != null) && (this.keyArray.length > 0)) {
+var i, j, t, b, a=((evt.altKey) ? true : false), c=((evt.ctrlKey) ? true : false), s=((evt.shiftKey) ? true : false);
+if (this.coBehavior==-1) this.coBehavior=hX_6.getBehaviorById(this.DOMobj.id, hX_6.BHR_assist, hX_6._onIN);
+for (i=0; i < this.keyArray.length && result; i++) {
+if ((evt.keyCode == this.keyArray[i].keyCode) && (a == this.keyArray[i].modAlt) && (s == this.keyArray[i].modShift) && (c == this.keyArray[i].modCtrl)) {
+if ((this.keyArray[i].actions!=null && this.keyArray[i].actions.length>0 && this.keyArray[i].actions[0]!=null) || this.keyArray[i].fcn != null) {
+if (evt.type == hX_6._evKP)
+result=false;
+else {
+b=false;
+if (this.coBehavior!=null) for (j=0;!b&&j<this.keyArray[i].actions.length;j++) b=(this.keyArray[i].actions[j]==hX_6.ACT_SUBMIT);
+if (b && this.coBehavior.state && this.coBehavior.state.uirelease) this.coBehavior.state.uirelease();
+result=hX_6.action.processAction(thisObj, evt, this.keyArray[i].fcn, this.keyArray[i].actions, true,
+this.keyArray[i].targets, null, this.keyArray[i].cancelBubble, this.keyArray[i].retainFocus);
+}
+}
+}
+}
+}
+return result;
+}
+HxG_6.prototype.JSFBehaviorValidate=function () {
+this.type=hX_6.BHR_validate;
+this.validatorId=this.converterId=this.labelId=this.spanInfoId=this.spanErrorId=this.errorOnLoad=null;
+this.successActions=[];
+this.errorActions=[];
+this.successTargets=[];
+this.errorTargets=[];
+this.successFunction= this.errorFunction=this.successClass=this.errorClass=this.defaultClass=this.labelSuccessClass=this.labelErrorClass=null;
+this.spLabel=this.spInfo=this.spError=this.spanIsPopup=this.errorString=null;
+this.infoSpanAlways=this.errorSpanAlways=this.hasLabels=false;
+this.converter=this.validator=null;
+this.coBehavior=-1;
+this.extraEvents=null;
+this.isComponent=false;
+this.attributeTable=[];
+this.attributeTable ['validator']=['validatorId',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['converter']=['converterId',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['success-function']= ['successFunction',hX_6.ARG_TO_FCNS,	false,	null,	null];
+this.attributeTable ['error-function']=['errorFunction',	hX_6.ARG_TO_FCNS,	false,	null,	null];
+this.attributeTable ['success-action']=['successActions',hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['success-target']=['successTargets',hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['error-action']=['errorActions',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['error-target']=['errorTargets',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['success-class']=['successClass',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['error-class']=['errorClass',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['default-class']=['defaultClass',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['label-id']=['labelId',			hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['info-span-id']=['spanInfoId',		hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['error-span-id']=['spanErrorId',		hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['label-success-class']=['labelSuccessClass',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['label-error-class']=['labelErrorClass',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['span-is-popup']=['spanIsPopup',		hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['info-span-always']=['infoSpanAlways',	hX_6.ARG_IS_TRUE,	false,	null,	null];
+this.attributeTable ['error-span-always']=['errorSpanAlways',	hX_6.ARG_IS_TRUE,	false,	null,	null];
+this.setAttribute(arguments);
+}
+HxG_6.prototype.JSFBehaviorValidate.prototype=new hX_6.JSFBehavior();
+HxG_6.prototype.JSFBehaviorValidate.prototype.clearError=function () {
+this.errorOnLoad=null;
+}
+HxG_6.prototype.JSFBehaviorValidate.prototype.isVisible=function (o) {
+if (o==null) return false;
+var d=hX_6.g.getP(o, hX_6._DSP), v=hX_6.g.getP(o, hX_6._VIS);
+return ((d!=hX_6._NO) && (v==hX_6._VS || v=="auto" || v=="inherit"));
+}
+HxG_6.prototype.JSFBehaviorValidate.prototype.setAttributeCode=function () {
+this.validator=this.converter=null;
+if (this.validatorId) this.validator=hX_6.getValidatorById(this.validatorId);
+if (this.converterId) this.converter=hX_6.getConverterById(this.converterId);
+if (this.validator) {
+if ((this.validator.type == hX_6.CVT_number || this.validator.type == hX_6.CVT_datetime) && this.converter == null)
+this.validator=null;
+}
+if (this.spanIsPopup != null) {
+this.spanIsPopup=this.spanIsPopup.toUpperCase();
+if (this.spanIsPopup != "OVER" && this.spanIsPopup != "UNDER" && this.spanIsPopup != "LEFT" && this.spanIsPopup != "RIGHT") this.spanIsPopup=null;
+}
+this.hasLabels=(this.labelId!=null || this.spanInfoId!=null || this.spanErrorId!=null);
+this.spLabel= (this.labelId!=null)?hX_6.getElementById(this.labelId):null;
+this.spInfo=(this.spanInfoId!=null)?hX_6.getElementById(this.spanInfoId):null;
+this.spError= (this.spanErrorId!=null)?hX_6.getElementById(this.spanErrorId):null;
+}
+HxG_6.prototype.JSFBehaviorValidate.prototype.setEventCode=function () {
+if (!this.HTMLrendered) {
+var t,i,c,p,z,foundError=false, v=(this.spError!=null && this.isVisible(this.spError));
+this.isComponent=hX_6.getComponentById(this.DOMobj.id);
+if (this.DOMobj.tagName!=undefined && this.DOMobj.id!=undefined && this.DOMobj.tagName==hX_6._TAB) {
+p=this.DOMobj.parentNode;
+while (p!=null && p.tagName!=undefined && p.tagName!=hX_6._FRM) p=p.parentNode;
+if (p && p.tagName!=undefined && p.tagName==hX_6._FRM) {
+c=p.elements[this.DOMobj.id];
+c=(c.length==undefined)?[c]:c;
+for (i=0; i<c.length; i++) hX_6.attachEvent(c[i], this.eventname, hX_6._lL, this.subDispatch);
+if (this.extraEvents==null) this.extraEvents=[];
+this.extraEvents.push([c[i], this.eventname]);
+}
+}
+if (this.isComponent!=null && this.isComponent.type==hX_6.CMP_calendar) {
+c=hX_6.getElementById(this.DOMobj.id + "_INPUT");
+if (c) {
+hX_6.attachEvent(c, this.eventname, hX_6._lL, this.subDispatch1);
+if (this.extraEvents==null) this.extraEvents=[];
+this.extraEvents.push([c, this.eventname]);
+}
+}
+if (this.spanIsPopup!=null) {
+p=null;
+if (this.spError) {
+p=this.spError.parentNode;
+if (document.body) document.body.appendChild(this.spError);
+if (hX_6.g.getP(this.spError, hX_6._POS)!=hX_6._ABS) hX_6.g.setP(this.spError, hX_6._POS, hX_6._ABS);
+if (v && hX_6.g.getP(this.spError, hX_6._DSP)!=hX_6._BLK) hX_6.g.setP(this.spError, hX_6._DSP, hX_6._BLK);
+z=parseInt(hX_6.g.getP(this.spError, hX_6._ZND),10);
+if (z!=99999) hX_6.g.setP(this.spError, hX_6._ZND,"99999");
+}
+if (this.spInfo) {
+p=this.spInfo.parentNode;
+if (document.body) document.body.appendChild(this.spInfo);
+if (hX_6.g.getP(this.spInfo, hX_6._POS)!=hX_6._ABS) hX_6.g.setP(this.spInfo, hX_6._POS, hX_6._ABS);
+if (this.isVisible(this.spInfo) && hX_6.g.getP(this.spInfo, hX_6._DSP)!=hX_6._BLK) hX_6.g.setP(this.spInfo, hX_6._DSP, hX_6._BLK);
+z=parseInt(hX_6.g.getP(this.spInfo, hX_6._ZND),10);
+if (z!=99999) hX_6.g.setP(this.spInfo, hX_6._ZND,"99999");
+}
+if (p!=null && p.tagName!=undefined && p.tagName==hX_6._TD && p.firstChild==null)
+hX_6.setIHTML(p,"<SPAN style='font-size:1px'>&nbsp;</SPAN>");
+hX_6.lastPositionTimer=hX_6.i.startTimerTimed (this.DOMobj.id, 0, "redraw", 500, hX_6.BHR_validate, hX_6._onB);
+}
+if ((this.spInfo!=null) && this.infoSpanAlways && !v) hX_6.g.setP(this.spInfo, hX_6._DSP, ((this.spanIsPopup!=null)?hX_6._BLK:hX_6._E));
+if (this.spError!=null) {
+if (this.errorSpanAlways) this.errorString=hX_6.getIHTML(this.spError);
+this.errorOnLoad=(v) ? this.errorString : null;
+if (this.errorOnLoad!=null) {
+if (this.eventname==hX_6._onB) {
+if (this.errorClass!=null && this.DOMobj.className!=this.errorClass) this.DOMobj.className=this.errorClass;
+} else {
+if (this.spLabel && this.labelErrorClass!=null && this.spLabel.className!=this.labelErrorClass) this.spLabel.className=this.labelErrorClass;
+}
+}
+}
+if (this.eventname==hX_6._onB && this.errorActions!=null && this.successActions!=null) {
+for (i=0; !foundError && i < this.errorActions.length; i++) {
+t=(this.errorActions[i]!=null) ? this.errorActions[i] : hX_6._E;
+if (t==hX_6.ACT_FOCUS || t==hX_6.ACT_SELECTED || t==hX_6.ACT_UNSELECTED)
+foundError=this.errorTargets == null || this.errorTargets.length < i+1 || this.errorTargets[i]==null || this.errorTargets[i].length==0 || this.errorTargets[i]==this.DOMobj.id;
+}
+if (foundError) {
+for (i=0; i < this.successActions.length; i++) {
+t=(this.successActions[i]!=null) ? this.successActions[i] : hX_6._E;
+if (t==hX_6.ACT_FOCUS || t==hX_6.ACT_SELECTED) {
+if (this.successTargets == null || this.successTargets.length < i+1 || this.successTargets[i]==null || this.successTargets[i].length==0 || this.successTargets[i]==this.DOMobj.id)
+this.successActions[i]=hX_6._E;
+}
+}
+}
+}
+foundError=false;
+for (i=0; this.errorActions != null && i < this.errorActions.length; i++) {
+t=(this.errorActions[i]!=null) ? this.errorActions[i] : hX_6._E;
+if (t==hX_6.ACT_FOCUS || t==hX_6.ACT_SELECTED || t==hX_6.ACT_UNSELECTED) {
+if (foundError) this.errorActions[i]=hX_6._E;
+else foundError=true;
+}
+}
+foundError=false;
+for (i=0; this.successActions != null && i < this.successActions.length; i++) {
+t=(this.successActions[i]!=null) ? this.successActions[i] : hX_6._E;
+if (t==hX_6.ACT_FOCUS || t==hX_6.ACT_SELECTED || t==hX_6.ACT_UNSELECTED) {
+if (foundError) this.successActions[i]=hX_6._E;
+else foundError=true;
+}
+}
+}
+}
+HxG_6.prototype.JSFBehaviorValidate.prototype.dispatchTimer=function (item, action) {
+hX_6.action.positionLabels (this.DOMobj, this.spanIsPopup, this.spInfo, this.spError);
+}
+HxG_6.prototype.JSFBehaviorValidate.prototype.destroyCode=function () {
+var i,d=[this.spLabel,this.spInfo,this.spError,this.successActions,this.errorActions,this.successTargets,this.errorTargets];
+for (i=0; i<d.length; i++) {
+if (d[i]) {
+while (d[i].length>0) d[i].pop();
+delete d[i];
+}
+}
+delete d;
+return true;
+}
+HxG_6.prototype.JSFBehaviorValidate.prototype.subDispatch=function (evt) {
+evt=(evt) ? evt : ((event) ? event: null);
+if (evt) {
+var b,c=hX_6.evtGetTarget(evt);
+if (c!=null) {
+b=hX_6.getBehaviorById(c.name, hX_6.BHR_validate, evt.type);
+if (b!=null && b.DOMobj) return(b.dispatchBehavior (b.DOMobj, evt));
+}
+}
+}
+HxG_6.prototype.JSFBehaviorValidate.prototype.subDispatch1=function (evt) {
+evt=(evt) ? evt : ((event) ? event: null);
+if (evt) {
+var b,c=hX_6.evtGetTarget(evt);
+if (c!=null) {
+b=c.id.lastIndexOf("_INPUT");
+if (b>=0) {
+c=c.id.substr(0,b);
+b=hX_6.getBehaviorById(c, hX_6.BHR_validate, evt.type);
+if (b!=null && b.DOMobj) return(b.dispatchBehavior (b.DOMobj, evt));
+}
+}
+}
+}
+HxG_6.prototype.JSFBehaviorValidate.prototype.dispatchBehavior=function (thisObj, evt) {
+var result=true;
+if ((this.DOMobj != null) && (evt != null)) {
+if (hX_6.pendingFocusReturn && hX_6.pendingFocusReturn != this.DOMobj.id)
+return true;
+if (evt.type==hX_6._evF && hX_6.pendingBlurRefocus != null && hX_6.pendingBlurRefocus == this.DOMobj.id) {
+hX_6.pendingBlurRefocus=null;
+return true;
+}
+hX_6.pendingFocusReturn=hX_6.pendingBlurRefocus=null;
+if ((this.DOMobj.readOnly != null && this.DOMobj.readOnly == true) || (this.DOMobj.disabled != null && this.DOMobj.disabled == true))
+return true;
+if (this.coBehavior == -1) this.coBehavior=hX_6.getBehaviorById(this.DOMobj.id, hX_6.BHR_assist, hX_6._onIN);
+if (evt.type==hX_6._evB || evt.type==hX_6._evF) {
+var error=null, strValue=this.DOMobj.value, objValue=strValue;
+if (evt.type==hX_6._evF) {
+if (this.coBehavior && this.coBehavior.assist)
+error=null;
+else if (this.converter && strValue!=null) {
+if (this.converter && strValue.length > 0) {
+objValue=this.converter.stringToValue(strValue);
+if (objValue == null)
+error=this.converter.lastError();
+}
+}
+if (error != null && error == hX_6.L[this.lc].ERR_empty) error=null;
+} else {
+var spc=this.specialValidator();
+if (spc.handled) {
+if (spc.lastError) error=hX_6.L[this.lc].ERR_required;
+else objValue=spc.lastValue;
+delete spc;
+} else {
+if (this.converter) {
+if (strValue.length == 0 && (this.converter.type != hX_6.CVT_mask))
+objValue=hX_6._E;
+else {
+objValue=this.converter.stringToValue(strValue);
+if (objValue == null)
+error=this.converter.lastError();
+else {
+strValue=this.converter.valueToString(objValue);
+if (strValue == null) error=this.converter.lastError();
+else this.DOMobj.value=strValue;
+}
+}
+}
+if (error == null && this.validator) {
+if (!(this.validator.validate(objValue, this.converter)))
+error=this.validator.lastError();
+}
+}
+}
+var fcn=this.successFunction, action, cssStyle, b=null, cssLabelStyle=null, tgt;
+if (error != null) {
+evt.errorMsg=error;
+evt.objValue=void(0);
+} else {
+if (fcn != null) {
+evt.errorMsg=void(0);
+evt.objValue=objValue;
+try {
+var realfcn=(hX_6.isFunction(fcn)) ? fcn : new Function ("event", fcn);
+result=realfcn.call(thisObj, evt);
+result=(hX_6.isUnDef(typeof result)) ? true : ((result == false) ? false: true);
+if (evt) {
+if (evt.returnValue!=undefined && evt.returnValue == false) result=false;
+else if (evt.getPreventDefault && evt.getPreventDefault()) result=false;
+}
+}
+catch (e) {
+window.status=hX_6.INTERR_Dispatcher;
+if (evt && evt.errorMsg)
+evt.errorMsg=null;
+}
+if (!result) {
+if (evt.errorMsg!=undefined)
+error=evt.errorMsg;
+else
+ error=evt.errorMsg=hX_6.L[this.lc].ERR_generic
+ }
+}
+}
+if (this.errorOnLoad!=null && this.hasLabels)
+evt.errorMsg=error=this.errorOnLoad;
+if (error && this.errorSpanAlways && this.errorString!=null)
+evt.errorMsg=error=this.errorString;
+if (error != null) {
+fcn=this.errorFunction;
+action=this.errorActions;
+tgt=(this.errorTargets == null) ? [this.DOMobj] : this.errorTargets;
+cssStyle=(this.errorClass!=null)?this.errorClass:((this.successClass) ? this.successClass : this.defaultClass);
+} else {
+fcn=null;
+action=this.successActions;
+tgt=(this.successTargets == null) ? [this.DOMobj] : this.successTargets;
+cssStyle=(this.successClass) ? this.successClass : this.defaultClass;
+}
+var lab=null, inf=null, err=null, infoShow=false, errorShow=false;
+if (evt.type==hX_6._evB || (evt.type==hX_6._evF && error!=null)) {
+lab=this.spLabel; inf=this.spInfo; err=this.spError;
+if (error != null) {
+if (this.spLabel)	cssLabelStyle=((this.labelErrorClass!=null)?this.labelErrorClass:((this.labelSuccessClass!=null)?this.labelSuccessClass:null));
+if (this.spInfo)	infoShow=false;
+if (this.spError)	errorShow=true;
+} else {
+if (this.spLabel)	cssLabelStyle=(this.labelSuccessClass!=null)?this.labelSuccessClass:null;
+if (this.spInfo)	infoShow=(this.infoSpanAlways);
+if (this.spError)	errorShow=false;
+}
+if (this.errorOnLoad!=null) {
+this.errorOnLoad=null;
+b=hX_6.getBehaviorById(this.DOMobj.id, this.type, ((this.eventname==hX_6._onF)?hX_6._onB:hX_6._onF));
+if (b) b.clearError();
+}
+} else {
+if (!this.infoSpanAlways && (this.spError==null || !this.isVisible(this.spError))) {
+inf=this.spInfo;
+infoShow=true;
+}
+}
+result=hX_6.action.processActionEx (this.DOMobj, evt, fcn, action, false, tgt, cssStyle, null, null, (error != null),
+error, lab, cssLabelStyle, this.spanIsPopup,  inf, infoShow, err, errorShow);
+}
+}
+return result;
+}
+HxG_6.prototype.JSFBehaviorValidate.prototype.specialValidator=function () {
+var r=false, lErr=false, lVal=hX_6._E, sel=false, i,c,s,p=((this.DOMobj.form!=undefined)?this.DOMobj.form:this.DOMobj.parentNode);
+if (this.validator && this.validator.required && this.DOMobj!=null && this.DOMobj.tagName!=undefined) {
+if (this.DOMobj.tagName==hX_6._SEL) {
+while (p!=null && p.tagName!=undefined && p.tagName!=hX_6._FRM) p=p.parentNode;
+if (p && p.tagName!=undefined && p.tagName==hX_6._FRM && this.DOMobj.id!=undefined) {
+r=true;
+c=p.elements[this.DOMobj.id];
+c=(c.length==undefined)?[c]:c;
+for (i=0; i<c.length; i++) {
+if (c[i].selected) {
+if (this.DOMobj.size==1) {
+s=hX_6.allTrim(c[i].value);
+if (s.length>0 && s!=hX_6._Z) {
+sel=true;
+lVal=lVal+((lVal.length>0)?hX_6._SM:hX_6._E)+c[i].value;
+}
+} else {
+sel=true;
+lVal=lVal+((lVal.length>0)?hX_6._SM:hX_6._E)+c[i].value;
+}
+}
+}
+if (!sel) lErr=true;
+}
+} else if (this.DOMobj.tagName==hX_6._TAB) {
+while (p!=null && p.tagName!=undefined && p.tagName!=hX_6._FRM) p=p.parentNode;
+if (p && p.tagName!=undefined && p.tagName==hX_6._FRM && this.DOMobj.id!=undefined) {
+r=true;
+c=p.elements[this.DOMobj.id];
+c=(c.length==undefined)?[c]:c;
+for (i=0; i<c.length; i++) {
+if (c[i].checked) {
+s=(c[i].value && c[i].value.length>0)?c[i].value:"on";
+lVal=lVal+((lVal.length>0)?hX_6._SM:hX_6._E)+s;
+sel=true;
+}
+}
+if (!sel) lErr=true;
+}
+} else if (this.DOMobj.tagName==hX_6._INP && this.DOMobj.type!=undefined) {
+if (this.DOMobj.type==hX_6._CHK) {
+r=true;
+if (!this.DOMobj.checked) lErr=true;
+else lVal="on";
+} else if (this.DOMobj.type==hX_6._FIL) {
+r=true;
+if (this.DOMobj.value!=null && this.DOMobj.value.length>0) lVal=this.DOMobj.value;
+else lErr=true;
+}
+}
+if (!r && this.isComponent!=null) {
+if (this.isComponent.type==hX_6.CMP_colorpicker) {
+r=true;
+if (this.DOMobj.value==null || this.DOMobj.value.length==0) lErr=true;
+else lVal=this.DOMobj.value;
+} else if (this.isComponent.type==hX_6.CMP_calendar) {
+r=true;
+c=hX_6.getElementById(this.DOMobj.id + "_INPUT");
+if (c.value==null || c.value.length==0) lErr=true;
+else lVal=c.value;
+}
+}
+}
+return {handled:r, lastError:lErr, lastValue:lVal};
+}
+HxG_6.prototype.JSFBehaviorAssist=function () {
+this.type=hX_6.BHR_assist;
+this.suppressAttach=true;
+this.converterId=this.validatorId=this.autoTab=this.autoSubmit=this.autoChar=this.promptChar=this.imeMode=null;
+this.converter=this.validator=this.assist=this.state=this.maxChars=null;
+this.doAutoChar=false;
+this.attributeTable=[];
+this.attributeTable ['converter']=['converterId',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['validator']=['validatorId',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable	['auto-char']=['autoChar',		hX_6.ARG_IS_TRUE,	false,	null,	null];
+this.attributeTable ['auto-tab']=['autoTab',		hX_6.ARG_TO_NUM,	false,	0,		999999];
+this.attributeTable	['auto-submit']=['autoSubmit',	hX_6.ARG_TO_NAS,	false,	null,	null];
+this.attributeTable ['prompt-char']=['promptChar',	hX_6.ARG_TO_NAS,	false,	null,	null];
+this.attributeTable ['ime-mode']=['imeMode',		hX_6.ARG_TO_NAN,	false,	null,	null];
+this.setAttribute(arguments);
+}
+HxG_6.prototype.JSFBehaviorAssist.prototype=new hX_6.JSFBehavior();
+HxG_6.prototype.JSFBehaviorAssist.prototype.setAttributeCode=function () {
+this.validator=this.converter=null;
+if (this.validatorId) this.validator=hX_6.getValidatorById(this.validatorId);
+if (this.converterId) this.converter=hX_6.getConverterById(this.converterId);
+if (this.validator) {
+if ((this.validator.type==hX_6.CVT_number || this.validator.type==hX_6.CVT_datetime) && this.converter==null)
+this.validator=null;
+}
+if (this.promptChar) {
+if (this.promptChar == hX_6._DFT || this.promptChar.length == 0) this.promptChar=hX_6._U;
+if (this.promptChar.length > 1) this.promptChar=this.promptChar.charAt(0);
+this.autoChar=true;
+}
+if (this.autoChar && !this.promptChar) this.promptChar=hX_6._U;
+if (this.autoChar && this.converter && this.converter.type==hX_6.CVT_number && this.converter.isExponent) {
+this.promptChar=this.autoChar=null;
+}
+this.doAutoChar=(this.autoChar && this.converter);
+}
+HxG_6.prototype.JSFBehaviorAssist.prototype.setEventCode=function () {
+if (!this.HTMLrendered) {
+if (this.doAutoChar) {
+this.state=new hX_6.inputState(this.DOMobj, this);
+if (this.converter.type == hX_6.CVT_number)
+this.assist=new hX_6.NumberAssist(this.DOMobj, this.state, this.converter, this.validator, this.promptChar);
+else if (this.converter.type == hX_6.CVT_datetime)
+this.assist=new hX_6.DateTimeAssist(this.DOMobj, this.state, this.converter, this.validator, this.promptChar);
+else if (this.converter.type == hX_6.CVT_mask)
+this.assist=new hX_6.MaskAssist(this.DOMobj, this.state, this.converter, this.validator, this.promptChar);
+}
+}
+if (this.autoTab != null) {
+var maxlen=(this.autoTab > 0) ? this.autoTab : 0;
+var domMaxLen=(this.DOMobj.maxLength == -1 || this.DOMobj.maxLength == 0x7fffffff || this.DOMobj.maxLength == void(0)) ? 0 : this.DOMobj.maxLength;
+maxlen=(maxlen <= 0) ? domMaxLen : maxlen;
+this.maxChars=(maxlen > 0) ? maxlen : ((this.converter && this.converter.getMaxLength) ? this.converter.getMaxLength(this.validator) : 0);
+if (this.maxChars <= 0)
+this.autoTab=null;
+else {
+if (domMaxLen > 0) this.DOMobj.maxLength=this.maxChars;
+if (!this.HTMLrendered && this.state == null) this.state=new hX_6.inputState(this.DOMobj, this, true);
+this.state.setAutoTab(this.maxChars);
+if (this.autoSubmit != null) this.state.setAutoSubmit(true);
+}
+}
+if (this.imeMode != null) {
+if (hX_6.brw.isIE()) {
+if (this.assist != null) this.DOMobj.style.imeMode=hX_6._DSB;
+else if (this.imeMode != null) this.DOMobj.style.imeMode=this.imeMode;
+}
+}
+}
+HxG_6.prototype.JSFBehaviorAssist.prototype.destroyCode=function () {
+var i,d=[this.state,this.assist];
+for (i=0; i<d.length; i++) {
+if (d[i]) {
+while (d[i].length>0) d[i].pop();
+delete d[i];
+}
+}
+delete d;
+return true;
+}
+HxG_6.prototype.JSFBehaviorAlert=function () {
+this.type=hX_6.BHR_alert;
+this.message=hX_6._E;
+this.mType=1;
+this.attributeTable=[];
+this.attributeTable ['message']=['message',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['prompt-type']=['mType',		hX_6.ARG_TO_NUM,	false,	0,		2];
+this.setAttribute(arguments);
+}
+HxG_6.prototype.JSFBehaviorAlert.prototype=new hX_6.JSFBehavior();
+HxG_6.prototype.JSFBehaviorAlert.prototype.dispatchBehavior=function (thisObj, evt) {
+if (this.DOMobj != null && this.eventname != hX_6._E)  {
+var a=[];
+var t=[this.message];
+if (this.mType == 2) {
+return false;
+} else if (this.mType == 1 && this.message != hX_6._E) {
+a.push(hX_6.ACT_CONFIRM);
+return hX_6.action.processAction(this.DOMobj, evt, null, a, true, t, null, null, null);
+} else if (this.message != hX_6._E) {
+a.push(hX_6.ACT_ALERT);
+hX_6.action.processAction(this.DOMobj, evt, null, a, true, t, null, null, null);
+return true;
+}
+}
+return true;
+}
+HxG_6.prototype.JSFBehaviorFocus=function () {
+this.type=hX_6.BHR_focus;
+this.beforeOthers=false;
+this.suppressAttach=true;
+this.focusId=null;
+this.select=false;
+this.attributeTable=[];
+this.attributeTable ['focus-id']=['focusId',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['select']=['select',	hX_6.ARG_IS_TRUE,	false,	null,	null];
+this.setAttribute(arguments);
+}
+HxG_6.prototype.JSFBehaviorFocus.prototype=new hX_6.JSFBehavior();
+HxG_6.prototype.JSFBehaviorFocus.prototype.setEventCode=function() {
+if (!this.HTMLrendered && this.eventname == hX_6._onL) this.dispatchBehavior(null, null);
+return true;
+}
+HxG_6.prototype.JSFBehaviorFocus.prototype.dispatchBehavior=function (thisObj, evt) {
+if (this.eventname != hX_6._E) {
+var n, obj=(this.focusId == null) ? null : hX_6.getElementById(this.focusId);
+if (obj == null || (obj && obj.tagName && obj.tagName == HxG_6._FRM)) {
+n=hX_6.getTabElements();
+if (n && n.length > 0 && n[0].obj) hX_6.i.setFocus(n[0].obj, this.select, true);
+} else
+ hX_6.i.setFocus(obj, this.select, true);
+}
+return;
+}
+HxG_6.prototype.JSFBehaviorHS=function () {
+this.type=hX_6.BHR_hs;
+this.beforeOthers=false;
+this.inHideObject=this.inHideTree=this.inHideField=hX_6._E;
+this.state=null;
+this.hideObject=this.hideField=this.hideTree=null;
+this.hasComponents=null;
+this.attributeTable=[];
+this.attributeTable ['hide-object']=['inHideObject',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['hide-tree']=['inHideTree',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['hide-field']=['inHideField',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['hide-field-value']=['state',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.setAttribute(arguments);
+}
+HxG_6.prototype.JSFBehaviorHS.prototype=new hX_6.JSFBehavior();
+HxG_6.prototype.JSFBehaviorHS.prototype.setEventCode=function() {
+this.hasComponents=(this.hideObject) ? hX_6.getComponentsInId(this.hideObject) : null;
+this.hideShow();
+return true;
+}
+HxG_6.prototype.JSFBehaviorHS.prototype.setAttributeCode=function() {
+this.hideObject=hX_6.getElementById(this.inHideObject);
+this.hideTree=hX_6.getElementById(this.inHideTree);
+this.hideField=hX_6.getElementById(this.inHideField);
+this.state=(this.state==null || this.state==hX_6._E)?hX_6._NO:this.state.toLowerCase();
+if (this.HTMLrendered) this.hideShow();
+return true;
+}
+HxG_6.prototype.JSFBehaviorHS.prototype.dispatchBehavior=function (thisObj, evt) {
+if (this.DOMobj != null && this.hideObject != null) {
+this.state=(this.hideObject.style.display == hX_6._NO) ? hX_6._VS : hX_6._NO;
+this.hideShow();
+}
+return;
+}
+HxG_6.prototype.JSFBehaviorHS.prototype.hideShow=function () {
+if (this.DOMobj != null && this.hideObject != null) {
+var bHidden=(this.hideObject.style.display == hX_6._NO), bStateHidden=(!(this.state == hX_6._VS)), lD='_display';
+if (bHidden != bStateHidden) {
+var r, child, idString, node;
+if (this.hideTree != null && this.hideTree.rows)
+for (r=0; r < this.hideTree.rows.length; r++) {
+if (r != 0) {
+child=hX_6.findNestedObject(this.hideTree.rows[r], hX_6._TAB);
+if (child != null && child.nodeName == hX_6._TAB) {
+child.style.display=hX_6._NO;
+idString=child.id;
+idString=idString.substring(0,idString.lastIndexOf(hX_6._U));
+node=hX_6.getElementById (idString+lD);
+if (node != null) node.value=hX_6._NO;
+}
+}
+}
+if (this.state != hX_6._NO) {
+this.hideObject.style.display=hX_6._E;
+if (this.hasComponents)	hX_6.redraw();
+} else
+ this.hideObject.style.display=hX_6._NO;
+}
+if (this.hideField && this.state != this.hideField.value) this.hideField.value=this.state;
+}
+return;
+}
+HxG_6.prototype.JSFBehaviorTrack=function () {
+this.type=hX_6.BHR_track;
+this.suppressAttach=true;
+this.lastField=null;
+this.lastCursor=null;
+this.isTrackable=function (obj) {
+if (obj.tagName) {
+var t, skip=(obj.tagName==hX_6._BTN || obj.tagName==hX_6._ANC);
+if (!skip && obj.tagName == hX_6._INP) {
+t=obj.type.toLowerCase();
+skip=(t==hX_6._SBM || t==hX_6._RES || t==hX_6._lIMG || t==hX_6._TBTN)
+}
+return !skip;
+}
+return false;
+}
+this.attributeTable=[];
+this.setAttribute(arguments);
+}
+HxG_6.prototype.JSFBehaviorTrack.prototype=new hX_6.JSFBehavior();
+HxG_6.prototype.JSFBehaviorTrack.prototype.setEventCode=function () {
+if (!this.HTMLrendered) {
+if (this.DOMobj && this.DOMobj.id && this.DOMobj.id.length > 0 && this.DOMobj.tagName && this.DOMobj.tagName == hX_6._FRM) {
+this.lastField=document.getElementById(this.DOMobj.id + ":POST_LASTFIELD");
+this.lastCursor= document.getElementById(this.DOMobj.id + ":POST_LASTCURSOR");
+if (this.lastField != null && this.lastField.value!=undefined) {
+this.extraEvents=[];
+this.lastField.disabled=false;
+if (this.lastCursor != null) this.lastCursor.diabled=false;
+if (hX_6.brw.isIE()) {
+hX_6.attachBehaviorEvent(this.DOMobj, this.type, "onfocusin", hX_6._lF, hX_6._onIN);
+this.extraEvents.push([this.DOMobj,"onfocusin"]);
+} else {
+var i, obj, tabElements=hX_6.getTabElements();
+for (i=0; i < tabElements.length; i++) {
+obj=tabElements[i].obj;
+if (obj && obj.id && obj.tagName && this.isTrackable(obj)) {
+hX_6.attachBehaviorEvent(obj, this.type, hX_6._onF, hX_6._lF, "oninput_FORM");
+this.extraEvents.push([obj,hX_6._onF]);
+}
+}
+}
+hX_6.attachBehaviorEvent(this.DOMobj, this.type, hX_6._onMU, hX_6._lF, hX_6._onIN);
+hX_6.attachBehaviorEvent(this.DOMobj, this.type, hX_6._onKU, hX_6._lF, hX_6._onIN);
+this.extraEvents.push([this.DOMobj, hX_6._onMU]);
+this.extraEvents.push([this.DOMobj, hX_6._onKU]);
+if (hX_6.cursorTracking == null) hX_6.cursorTracking=[];
+hX_6.cursorTracking.push(this);
+}
+}
+}
+}
+HxG_6.prototype.JSFBehaviorTrack.prototype.dispatchBehavior=function (thisObj, evt) {
+var src, result=true;
+if ((this.DOMobj != null) && (evt != null)) {
+src=(evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : (hX_6.brw.isIE() ? document.body : null));
+this.markFocus(src, evt.type);
+}
+return result;
+}
+HxG_6.prototype.JSFBehaviorTrack.prototype.markFocus=function (src, etype) {
+if (src != null) {
+if (src.form!=undefined && src.form!=null && src.form==this.DOMobj) {
+var id=(src.id!=undefined && src.id!=null && src.id.length>0)?src.id:hX_6._E;
+id=(id.length>0) ? id : (src.name!=undefined && src.name!=null && src.name.length>0)?src.name:hX_6._E;
+if (id.length > 0 && hX_6.isTabbable(src) && this.isTrackable(src)) {
+if (etype=="focusin" || etype==hX_6._evF) {
+this.lastField.value=id;
+if (this.lastCursor != null) this.lastCursor.value=-1;
+} else if (this.lastCursor != null && (etype==hX_6._evMU || etype==hX_6._evKU)) {
+if (this.lastField.value == id) {
+var t=(src.type) ? src.type.toLowerCase() : hX_6._E;
+this.lastCursor.value=(src.tagName==hX_6._TXT || (src.tagName==hX_6._INP && t==hX_6._XT)) ? hX_6.sel.getCaretPos(src) : -1;
+}
+}
+}
+}
+}
+}
+HxG_6.prototype.JSFBehaviorMouseclick=function () {
+this.type=hX_6.BHR_mouseclick;
+this.suppressAttach=true;
+this.timer=null;
+this.mouseArray=[];
+this.scope=hX_6._RGT;
+this.fcn=null;
+this.actions= [];
+this.targets= [];
+this.extraEvents=null;
+this.extraIds=null;
+this.attributeTable=[];
+this.attributeTable ['scope']=['scope',		hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['action']=['actions',	hX_6.ARG_TO_NAU,	false,	null,	null];
+this.attributeTable ['function']=['fcn',		hX_6.ARG_TO_FCNS,	false,	null,	null];
+this.attributeTable ['target']=['targets',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.setAttribute(arguments);
+}
+HxG_6.prototype.JSFBehaviorMouseclick.prototype=new hX_6.JSFBehavior();
+HxG_6.prototype.JSFMouse=function () {
+this.scope=hX_6._RGT;
+this.actions=this.fcn=this.targets=null;
+}
+HxG_6.prototype.JSFBehaviorMouseclick.prototype.addSubComponent=function(obj) {
+var sub=new hX_6.JSFMouse();
+sub.scope=obj.scope;
+if (obj.actions)	sub.actions=obj.actions;
+if (obj.targets)	sub.targets=obj.targets;
+if (obj.fcn) 		sub.fcn=obj.fcn;
+this.mouseArray.push(sub);
+}
+HxG_6.prototype.JSFBehaviorMouseclick.prototype.setAttributeCode=function() {
+var o, i, found=false;
+if (this.scope) this.scope=this.scope.toLowerCase();
+for (i=0; i < this.mouseArray.length; i++) {
+o=this.mouseArray[i];
+if (o.scope==this.scope) {
+found=true;
+if (this.actions)	o.actions=this.actions;
+if (this.targets)	o.targets=this.targets;
+if (this.fcn) 		o.fcn=this.fcn;
+}
+}
+if (!found) this.addSubComponent(this);
+}
+HxG_6.prototype.JSFBehaviorKeybind.prototype.destroyCode=function () {
+var o;
+while (this.mouseArraylength>0) {
+o=this.mouseArray.pop();
+delete o;
+}
+}
+HxG_6.prototype.JSFBehaviorMouseclick.prototype.setEventCode=function () {
+var i, ms=null, eID;
+for (i=0; i<this.mouseArray.length; i++) {
+if (ms==null) ms=this.mouseArray[i].scope;
+else if (this.mouseArray[i].scope==hX_6._ALL) ms=hX_6._ALL;
+else if (this.mouseArray[i].scope==hX_6._LFT) ms=(ms==hX_6._LFT)?hX_6._LFT:hX_6._ALL;
+else ms=(ms==hX_6._LFT)?hX_6._LFT:hX_6._ALL;
+if (ms==hX_6._ALL) break;
+}
+if (document.body.setCapture) {
+if (this.extraEvents==null) this.extraEvents=[];
+if (ms == hX_6._RGT || ms == hX_6._ALL) {
+hX_6.attachEvent(this.DOMobj, hX_6._onCM, hX_6._lL, "hX_6.dispatchMouse(this, event)");
+this.extraEvents.push([this.DOMobj, hX_6._onCM]);
+}
+if (ms == hX_6._LFT || ms == hX_6._ALL) {
+hX_6.attachEvent(this.DOMobj, hX_6._onMC, hX_6._lL, "hX_6.dispatchMouse(this, event)");
+hX_6.attachEvent(this.DOMobj, hX_6._onMCC, hX_6._lL, "hX_6.dispatchMouse(this, event)");
+this.extraEvents.push([this.DOMobj, hX_6._onMC]);
+this.extraEvents.push([this.DOMobj, hX_6._onMCC]);
+}
+hX_6.attachEvent(this.DOMobj, hX_6._onMD, hX_6._lL, "hX_6.dispatchMouse(this, event)");
+hX_6.attachEvent(this.DOMobj, hX_6._onMU, hX_6._lL, "hX_6.dispatchMouse(this, event)");
+this.extraEvents.push([this.DOMobj, hX_6._onMD]);
+this.extraEvents.push([this.DOMobj, hX_6._onMU]);
+} else if (document.body.addEventListener) {
+if (this.extraIds==null) this.extraIds=[];
+eID=hX_6.attachEvent(window, hX_6._onMD, hX_6._lL, hX_6.dispatchMouse1, null, null, true);
+this.extraIds.push([window, hX_6._onMD, eID]);
+eID=hX_6.attachEvent(window, hX_6._onMU, hX_6._lL, hX_6.dispatchMouse1, null, null, true);
+this.extraIds.push([window, hX_6._onMU, eID]);
+eID=hX_6.attachEvent(window, hX_6._onMC, hX_6._lL, hX_6.dispatchMouse1, null, null, true);
+this.extraIds.push([window, hX_6._onMC, eID]);
+eID=hX_6.attachEvent(window, hX_6._onMCC,hX_6._lL, hX_6.dispatchMouse1, null, null, true);
+this.extraIds.push([window, hX_6._onMCC, eID]);
+}
+}
+HxG_6.prototype.JSFBehaviorMouseclick.prototype.dispatchTimer=function (item, action) {
+document.body.releaseCapture();
+this.timer=null;
+}
+HxG_6.prototype.dispatchMouse1=function (evt) {
+hX_6.dispatchMouse(this, evt);
+}
+HxG_6.prototype.dispatchMouse=function (thisp, evt) {
+if ((typeof hX_6)=="undefined") return true;
+evt=(evt) ? evt : ((event) ? event: null);
+var j, m, p, b=(evt.type==hX_6._evCM?2:((evt.button<=1)?0:2)), thisB=null, src=hX_6.i.dispatchID(thisp);
+if (document.body.setCapture) {
+src=hX_6.i.dispatchID(thisp);
+if (evt && src) {
+m=hX_6.getBehaviorsById(src);
+for (j=0; j<m.length; j++) {
+if (m[j].type==hX_6.BHR_mouseclick && m[j].eventname==hX_6._onMS) {
+thisB=m[j]; break;
+}
+}
+}
+} else {
+p=evt.target;
+while (p && thisB==null) {
+if (p.id || p.tagName==hX_6._BBODY) {
+m=hX_6.getBehaviorsById(p.tagName==hX_6._BBODY?hX_6._BODY:p.id);
+for (j=0; j<m.length; j++) {
+if (m[j].type==hX_6.BHR_mouseclick && m[j].eventname==hX_6._onMS) {
+thisB=m[j]; break;
+}
+}
+}
+p=p.parentNode;
+}
+}
+if (thisB) {
+m=false;
+for (j=0; j<thisB.mouseArray.length; j++) {
+if (thisB.mouseArray[j].scope==hX_6._ALL || (thisB.mouseArray[j].scope==hX_6._LFT && b==0) || (thisB.mouseArray[j].scope==hX_6._RGT && b==2)) {
+if ((thisB.mouseArray[j].actions!=null && thisB.mouseArray[j].actions.length>0 && thisB.mouseArray[j].actions[0]!=null) || thisB.mouseArray[j].fcn != null) {
+if (evt.type==hX_6._evMD) {
+if (!m && document.body.setCapture) thisB.DOMobj.setCapture();
+m=true;
+} else if (evt.type==hX_6._evMU) {
+if (!m && document.body.setCapture && thisB.timer==null)
+thisB.timer=hX_6.i.startTimerTimed (thisB.id, 0, hX_6._onMS, 1, hX_6.BHR_mouseclick, hX_6._onMS);
+m=true;
+} else if (evt.type==hX_6._evMC || evt.type==hX_6._evCM) {
+hX_6.action.processAction(thisB.DOMobj, evt, thisB.mouseArray[j].fcn, thisB.mouseArray[j].actions, true, thisB.mouseArray[j].targets, null, null, null);
+m=true;
+} else if (evt.type==hX_6._evMCC) {
+m=true;
+}
+}
+}
+}
+if (m) {
+hX_6.i.cancelAction(evt, true);
+return false;
+}
+}
+return true;
+}
+HxG_6.prototype.JSFBehaviorSubmitListener=function () {
+this.type=hX_6.BHR_submitlistener;
+this.beforeOthers=false;
+this.attributeTable=[];
+this.setAttribute(arguments);
+}
+HxG_6.prototype.JSFBehaviorSubmitListener.prototype=new hX_6.JSFBehavior();
+HxG_6.prototype.JSFBehaviorSubmitListener.prototype.dispatchBehavior=function (thisObj, evt) {
+if (ODCRegistry!=undefined && ODCRegistry!=null && thisObj.tagName!=undefined && thisObj.tagName==hX_6._FRM) {
+ODCRegistry.saveControlsToForm(thisObj);
+}
+}
+HxG_6.prototype.JSFBehaviorAjax=function () {
+this.backChannel=null;
+this.DOMParser=null;
+this.deferScript=null;
+this.deferScriptChar=null;
+this.deferComp=null;
+this.deferCompAtt=null;
+this.nowScript=false;
+this.callbackWaiting=0;
+this.callbackAttempts=0;
+this.locked=false;
+this.saveId=null;
+this.saveEvt=null;
+this.pauseId=null;
+this.timerId=null;
+}
+HxG_6.prototype.JSFBehaviorAjax.prototype.onPageLoad=function () {
+this.saveId=this.DOMobj.id;
+hX_6.mustDestroy.push(this);
+return true;
+}
+HxG_6.prototype.JSFBehaviorAjax.prototype.setAttribute=function(a) {
+hX_6.parseArg (this.attributeTable, this, (arguments.length>1)?arguments:a);
+return true;
+}
+HxG_6.prototype.JSFBehaviorAjax.prototype.getAttribute=function (attribute) {
+return (hX_6.getArg(this.attributeTable, this, attribute));
+}
+HxG_6.prototype.JSFBehaviorAjax.prototype.destroy=function () {
+if (this.timerId=null) {
+hX_6.i.killTimerTimed (this.timerId);
+this.timerId=null;
+}
+if (this.backChannel) {
+if (this.backChannel.destroy) this.backChannel.destroy();
+delete (this.backChannel);
+}
+if (this.DOMParser) {
+this.DOMParser.parentNode.removeChild(this.DOMParser);
+delete this.DOMParser;
+}
+if (this.deferScript) delete this.deferScript;
+if (this.deferCompAtt) delete this.deferCompAtt;
+if (this.saveEvt) delete this.saveEvt;
+var i,d=[this.paramNames,this.paramFields,this.actions,this.targets];
+for (i=0; i<d.length; i++) {
+if (d[i]) {
+while (d[i].length>0) d[i].pop();
+delete d[i];
+}
+}
+delete d;
+if (this.attributeTable) delete this.attributeTable;
+return true;
+}
+HxG_6.prototype.JSFBehaviorAjax.prototype.dispatchBehavior=function (thisObj, evt) {
+var  r=true, m, t=this.DOMobj.tagName, url=((this.href==null || this.href.length==0)?window.location.pathname:hX_6.stripURL(this.href));
+url=hX_6.reEncodeURI(url);
+if (this.locked) return r;
+if (this.saveId) this.DOMobj=hX_6.getElementById (this.saveId);
+this.pauseId=null;
+this.timerId=null;
+if (t==hX_6._INP || t==hX_6._TXT || t==hX_6._BTN || t==hX_6._SEL) {
+this.callbackError(hX_6.INTERR_bc_badpanel);
+return false;
+}
+if (url!=null) {
+this.saveEvt=null;
+if (this.startFcn!=null) r=hX_6.action.processFunction(this.DOMobj, evt, this.startFcn);
+if (evt!=null) this.saveEvt=hX_6.i.duplicateEvent(evt);
+if (r) {
+this.uilock();
+this.pauseId=hX_6.action.pauseActions();
+m=(this.type==hX_6.BHR_ajaxget)?"axpartial":((this.type==hX_6.BHR_ajaxsubmit)?"axfull":"axnone");
+if (this.backChannel)
+this.backChannel.reset();
+else
+ this.backChannel=new hX_6.HTTPBackchannel("backChannel", this.callbackBehavior, ((this.type==hX_6.BHR_ajaxsubmit)?true:false), true, this.DOMobj.id+"_AJAX_IFRAME", this.callbackError, true, hX_6.isPortal);
+if (this.type==hX_6.BHR_ajaxsubmit && evt!=null) {
+var s=hX_6.evtGetTarget(evt), tagset=[];
+tagset.push(new hX_6.tagListItem(hX_6._INP,hX_6._SBM));
+tagset.push(new hX_6.tagListItem(hX_6._INP,hX_6._lIMG));
+tagset.push(new hX_6.tagListItem(hX_6._BTN,hX_6._SBM));
+s =(hX_6.isTag(s, tagset))?s.name:null;
+delete tagset;
+}
+this.backChannel.LoadEx(url, this, this.DOMobj, m, this.paramNames, this.paramFields, null, ((evt!=null)?hX_6.evtGetTarget(evt):null), s);
+}
+}
+return r;
+}
+HxG_6.prototype.JSFBehaviorAjax.prototype.callbackBehavior=function (XMLData, StringData) {
+var evt=null, r=true;
+if (XMLData && XMLData.documentElement) {
+} else if (StringData) {
+var isInc, incSrc, b, c, spcO=false, o, o1=null, DOM_o1=null, oH, i, j, k, l, h, t, svParent, svPos, svId, sE, tB="</BODY", tH="</HEAD>", tPH ='<head title="PORTALcontent">', tPHX="</head", isP=false, skip, firstTag=null, ch, ch1, chB=-1, w1, w2, BODY, lsrc="src", lcharset="charset", ltype="type", aa, ad=[], ab=document.getElementsByTagName(hX_6._SCR), lab=((ab)?ab.length:0);
+this.deferScript=hX_6._E;
+if (this.deferCompAtt) delete this.deferCompAtt;
+this.deferComp=this.deferCompAtt=this.deferScriptChar=null;
+this.nowScript=false;
+this.callbackWaiting=this.callbackAttempts=0;
+if (this.saveId) this.DOMobj=hX_6.getElementById (this.saveId);
+l=StringData.length;
+ch=StringData.indexOf(tH);
+if (ch<0) ch=StringData.indexOf(tH.toLowerCase());
+if (ch<0 && this.type!=hX_6.BHR_ajaxgetexternal && !hX_6.isPortal) {
+BODY=StringData;
+} else {
+if (ch<0) ch=0; else ch+=tH.length;
+while (ch!=null && ch<l) {
+while (ch<l && StringData.charAt(ch)!=hX_6._LT) ch++;
+ch1=hX_6.htmlParseTag(StringData, ch, false);
+if (ch1==null) ch=null;
+else {
+ch=ch1.ch;
+if (ch1.tag==hX_6._BBODY) {chB=ch; ch=null; }
+}
+}
+if (hX_6.isPortal) {
+ch=StringData.indexOf(tPH, chB);
+if (ch>=0) {
+chB=ch+tPH.length;
+isP=true;
+}
+}
+if (isP) {
+ch=StringData.lastIndexOf(tPHX);
+if (ch<0) {
+this.callbackError(hX_6.INTERR_bc_baddata);
+return false;
+}
+} else {
+ch=StringData.lastIndexOf(tB);
+if (ch<0) ch=StringData.lastIndexOf(tB.toLowerCase());
+}
+if (chB<0) {
+this.callbackError(hX_6.INTERR_bc_baddata);
+return false;
+}
+BODY=(ch>0) ? StringData.substring(chB,ch) : StringData.substr(chB);
+}
+if (this.DOMParser==null) this.DOMParser=hX_6.ifr.create(document, this.DOMobj.id + "_DOMPARSER", true, false);
+b=hX_6.ifr.getDoc(this.DOMParser);
+if (b && b.body) {
+try {
+ch=0; l=BODY.length; w1=hX_6._SCR.toLowerCase(); w2=(hX_6._SL+hX_6._SCR).toLowerCase();
+while (ch<l && BODY.charAt(ch)!=hX_6._LT) ch++;
+ch1=hX_6.htmlParseTag(BODY, ch, false);
+while (ch1!=null && ch<l && (ch1.tag==null || ch1.tag==hX_6._E || ch1.tag.toLowerCase()==w1 || ch1.tag.toLowerCase()==w2)) {
+if (firstTag==null && ch1.tag!=hX_6._E) firstTag=ch1.tag.toLowerCase();
+ch=ch1.ch;
+while (ch<l && BODY.charAt(ch)!=hX_6._LT) ch++;
+ch1=hX_6.htmlParseTag(BODY, ch, false);
+}
+if (ch1!=null && (ch1.tag==hX_6._TR || ch1.tag==hX_6._TBDY || ch1.tag==hX_6._THED))
+BODY=(hX_6._LT + hX_6._TAB + hX_6._GT) + BODY + (hX_6._LT + hX_6._SL + hX_6._TAB + hX_6._GT)
+if (hX_6.brw.isIE() && firstTag!=null && firstTag==w1)
+BODY="<SPAN style='display:none'><BR></SPAN>"+BODY;
+while (b.body.lastChild!=null) b.body.removeChild(b.body.lastChild);
+aa=b.getElementsByTagName(hX_6._SCR);
+hX_6.setIHTML(b.body, BODY, b);
+o=b.getElementById((this.source)?this.source:this.DOMobj.id);
+o=(o==null)?b.body:o;
+if (o) {
+c=(o.id==undefined)?null:hX_6.getComponentById(o.id);
+if (c!=null) spcO=(c.type==hX_6.CMP_dialog || c.type==hX_6.CMP_section || c.type==hX_6.CMP_menu);
+if (spcO) {
+this.deferComp=o.id;
+this.deferCompAtt=[];
+for (i in c.attributeTable) {
+s=c.getAttribute(i);
+if (s!=null) this.deferCompAtt.push([i,s+hX_6._E]);
+}
+if (c.type==hX_6.CMP_menu) {
+i=o.nextSibling;
+if (i!=null && i.tagName!=undefined && i.tagName==hX_6._DIV) {
+o1=i;
+i=this.DOMobj.nextSibling;
+if (i!=null && i.tagName!=undefined && i.tagName==hX_6._DIV) DOM_o1=i;
+}
+}
+}
+h=document.getElementsByTagName('head')[0]; aa=b.getElementsByTagName(hX_6._SCR);
+if (aa==null || aa.length==0) aa=b.getElementsByTagName(hX_6._SCR.toLowerCase());
+if (aa!=null) {
+for (i=0; i<aa.length; i++) {
+isInc=false;
+if (hX_6.brw.isSafari()) {
+if ((!aa[i].innerHTML || aa[i].innerHTML.length==0) && (aa[i].outerHTML && aa[i].outerHTML.toLowerCase().indexOf(" src=")>0)) {
+var qi=aa[i].outerHTML.toLowerCase().indexOf(" src=");
+incSrc=hX_6.Trim(aa[i].outerHTML.substr(qi+5));
+if (incSrc.length>=2) {
+var qq=incSrc.charAt(0);
+incSrc=incSrc.substr(1);
+qi=incSrc.indexOf(qq);
+if (qi>0) {
+incSrc=incSrc.substr(0,qi);
+if (incSrc && incSrc.length>0) isInc=true;
+}
+}
+}
+} else {
+isInc=!(aa[i].src==null || aa[i].src.length==0);
+if (isInc) incSrc=aa[i].src;
+}
+if (!isInc) {
+this.deferScript=this.deferScript + aa[i].text;
+if ((this.deferScriptChar==null||this.deferScriptChar.length==0) && aa[i].charset!=null) this.deferScriptChar=aa[i].charset;
+ad.push(aa[i]);
+} else {
+skip=false;
+for (j=0; !skip && j<lab; j++) {
+k=ab[j].src.lastIndexOf(incSrc);
+if (k>=0 && (k+incSrc.length >= ab[j].src.length)) skip=true;
+}
+if (!skip) {
+sE=document.createElement(hX_6._SCR);
+sE.setAttribute(lsrc,incSrc);
+if (aa[i].type!=null && aa[i].type.length>0) sE.setAttribute(ltype,aa[i].type);
+if (aa[i].charset!=null && aa[i].charset.length>0) sE.setAttribute(lcharset,aa[i].charset);
+if (hX_6.brw.isIE9() || hX_6.brw.isFirefox4()) {
+if (hX_6.brw.isIE9() && this.callbackWaiting==0) sE.onreadystatechange=this.callbackTwo.hX6_bind(this);
+this.callbackWaiting++;
+if (hX_6.brw.isFirefox4()) sE.onload=this.callbackOne.hX6_bind(this);
+}
+h.appendChild(sE);
+ad.push(aa[i]);
+this.nowScript=true;
+}
+}
+}
+}
+for (i=0; i<ad.length; i++) if (ad[i] && ad[i].parentNode) (ad[i].parentNode).removeChild(ad[i]);
+if (this.nowScript) hX_6.AJAX_prototypeloader();
+hX_6.redraw();
+while (this.DOMobj.lastChild!=null) this.destroyNode(this.DOMobj.lastChild);
+if (spcO) {
+svPos=this.DOMobj.nextSibling;
+svId=this.DOMobj.id;
+svParent=this.DOMobj.parentNode;
+this.destroyNode(this.DOMobj);
+if (DOM_o1!=null) {
+svPos=DOM_o1.nextSibling;
+this.destroyNode(DOM_o1);
+}
+}
+if (this.DOMobj.tagName != hX_6._TAB) {
+if (!spcO) {
+var ihtml=hX_6.getIHTML(o);
+if (ihtml!=null) hX_6.setIHTML(this.DOMobj, ihtml);
+} else {
+if (o.outerHTML) {
+t=document.createElement(hX_6._DIV);
+t.innerHTML=o.outerHTML;
+this.DOMobj=t.firstChild;
+if (svPos) svParent.insertBefore(this.DOMobj, svPos); else svParent.appendChild(this.DOMobj);
+if (o1!=null && DOM_o1!=null) {
+t.innerHTML=o1.outerHTML;
+if (this.DOMobj.nextSibling) svParent.insertBefore(t.firstChild, this.DOMobj.nextSibling); else svParent.appendChild(t.firstChild);
+}
+delete t;
+} else {
+this.DOMobj=document.importNode(o,false);
+if (svPos) svParent.insertBefore(this.DOMobj, svPos); else svParent.appendChild(this.DOMobj);
+hX_6.setIHTML(this.DOMobj, hX_6.getIHTML(o));
+if (o1!=null && DOM_o1!=null) {
+DOM_o1=document.importNode(o1,false);
+if (this.DOMobj.nextSibling) svParent.insertBefore(DOM_o1, this.DOMobj.nextSibling); else svParent.appendChild(DOM_o1);
+hX_6.setIHTML(DOM_o1, hX_6.getIHTML(o1));
+}
+}
+}
+} else {
+if (o.outerHTML) {
+if (this.type==hX_6.BHR_ajaxgetexternal && o.id!=undefined && this.DOMobj.id != o.id)
+o.id=this.DOMobj.id;
+var svtableid=this.DOMobj.id;
+this.DOMobj.outerHTML=o.outerHTML;
+this.DOMobj=hX_6.getElementById(svtableid);
+} else {
+hX_6.setIHTML(this.DOMobj, hX_6.getIHTML(o));
+}
+}
+if (b.body) {
+oH=b.body.firstChild;
+var stop=false, f, fs, ff, pre1="com.ibm.faces", pre2="com.sun.faces", pre3="javax.faces", cases=["com.ibm.faces.JWLAJAX.VIEW","com.ibm.faces.ENHANCED_SERVER_STATE_SAVING", "com.sun.faces.VIEW", "javax.faces.ViewState"];
+while (!stop && oH!=null) {
+if (oH.tagName!=undefined && oH.tagName==hX_6._INP && oH.type==hX_6._HI && oH.name!=undefined) {
+if (oH.name.indexOf(pre1)>=0 || oH.name.indexOf(pre2)>=0 || oH.name.indexOf(pre3)>=0) {
+for (i=0; i<cases.length; i++) {
+if (oH.name==cases[i]) {
+if (this.DOMobj.form!=undefined) f=obj.form;
+else f=hX_6.getParentOfType(this.DOMobj,hX_6._FRM);
+fs=document.getElementsByTagName(hX_6._FRM);
+if (f==null) fs=(fs && fs.length>0) ? fs[0] : null;
+if (f!=null && fs!=null) {
+for (j=0; j<fs.length; j++) {
+ff=fs[j].elements[oH.name];
+if (ff) {
+ff=(ff.length)?ff:[ff];
+for (k=0; k<ff.length; k++) {
+if (ff[k] && ff[k].form && ff[k].form.action && (ff[k].form.action==f.action)) {
+ff[k].value=oH.value;
+}
+}
+}
+}
+}
+stop=true;
+break;
+}
+}
+}
+}
+oH=oH.nextSibling;
+}
+}
+if (this.deferScript.length>0)
+if (hX_6.brw.isIE9() || hX_6.brw.isFirefox4()) {
+this.timerId=hX_6.i.startObjTimerTimed(this, "complete", 10);
+} else {
+this.timerId=hX_6.i.startObjTimerTimed(this, "complete", (hX_6.brw.isIE()?10:50));
+}
+else {
+if (this.endFcn!=null) r=hX_6.action.processFunction(this.DOMobj, this.saveEvt, this.endFcn);
+if (this.pauseId) hX_6.action.unPauseActions(this.pauseId);
+this.locked=false;
+}
+}
+if (BODY!=null) delete BODY;
+} catch (e) {
+this.callbackError(hX_6.INTERR_bc_baddata + ((e.message!=undefined && e.message.length>0)?(hX_6._B + e.message):hX_6._E));
+}
+}
+}
+return r;
+}
+HxG_6.prototype.JSFBehaviorAjax.prototype.destroyNode=function (node) {
+var a, i, k=null;
+while (node.lastChild!=null) this.destroyNode(node.lastChild);
+if (node.id!=undefined && node.id.length>0) {
+i=hX_6.getComponentById(node.id);
+if (i!=null) hX_6.removeComponent(i);
+a=hX_6.getBehaviorsById(node.id);
+for (i=0; a!=null && i<a.length; i++) if (a[i] != this) hX_6.removeBehavior(a[i]);
+}
+if (node.tagName!=undefined && node.tagName==hX_6._TD) {
+try {
+node.parentNode.deleteCell(node.parentNode.cells.length-1);
+} catch(e) {
+k=node.parentNode.removeChild(node);
+}
+} else if (node.tagName!=undefined && node.tagName==hX_6._TR) {
+try {
+node.parentNode.deleteRow(node.parentNode.rows.length-1);
+} catch(e) {
+k=node.parentNode.removeChild(node);
+}
+} else if (node.tagName!=undefined && (node.tagName.toLowerCase()==hX_6.TAG_OBJECT || node.tagName.toLowerCase()==hX_6.TAG_EMBED)) {
+if (hX_6.brw.isIE()) {
+try {
+node.stop();
+} catch(e) {
+}
+node.style.display="none";
+}
+k=node.parentNode.removeChild(node);
+} else
+ k=node.parentNode.removeChild(node);
+if (k!=null) delete k;
+}
+HxG_6.prototype.JSFBehaviorAjax.prototype.callbackOne=function () {
+if (this && this.callbackWaiting!=null) this.callbackWaiting--;
+}
+HxG_6.prototype.JSFBehaviorAjax.prototype.callbackTwo=function () {
+if (this && this.callbackWaiting!=null) {
+var cmp1="complete";
+var cmp2="loaded";
+var h=document.getElementsByTagName('head')[0];
+var aa=h.getElementsByTagName(hX_6._SCR);
+this.callbackWaiting=0;
+if (aa && aa.length>0) {
+for (var i=0; i<aa.length; i++) {
+if (aa[i].readyState!=cmp1 && aa[i].readyState!=cmp2) {
+this.callbackWaiting++;
+}
+}
+}
+}
+}
+HxG_6.prototype.JSFBehaviorAjax.prototype.dispatchTimer=function (item, action) {
+var o, i, s, spn, r=true;
+this.timerId=null;
+if (this.deferScript.length>0) {
+if ((hX_6.brw.isIE9() || hX_6.brw.isFirefox4()) && this.callbackWaiting > 0) {
+if (this.callbackAttempts < 15) {
+this.callbackAttempts++;
+this.timerId=hX_6.i.startObjTimerTimed(this, "recomplete", 75);
+return;
+} else {
+}
+}
+try {
+this.callbackWaiting=this.callbackAttempts=0;
+if (this.nowScript) hX_6.AJAX_prototypeloader();
+hX_6.bodyLoadDone=false;
+o=document.getElementById((this.source)?this.source:this.DOMobj.id);
+o=(o==null)?document.body:o;
+if (hX_6.brw.isIE()) {
+if (hX_6.brw.isIE8_CSS()) {
+window.eval(this.deferScript);
+} else {
+s=document.createElement(hX_6._SCR);
+s.setAttribute("type", "text/javascript");
+s.setAttribute("text", this.deferScript);
+if (this.deferScriptChar!=null && this.deferScriptChar.length>0) s.setAttribute("charset", this.deferScriptChar);
+o.appendChild(s);
+}
+} else if (hX_6.brw.isSafari()) {
+window.eval(this.deferScript);
+} else {
+if (hX_6.brw.isFirefox4()) {
+window.eval(this.deferScript);
+} else {
+spn=document.createElement(hX_6._SPN);
+s="<SCRIPT type='text/javascript'";
+if (this.deferScriptChar!=null && this.deferScriptChar.length>0) s=s + " charset='" + this.deferScriptChar + hX_6._SQT;
+s=s + hX_6._GT;
+spn.innerHTML=s+this.deferScript+"</SCRIPT>";
+document.body.appendChild(spn);
+}
+}
+} catch(e) {
+this.callbackError(hX_6.INTERR_bc_baddata + ((e.message!=undefined && e.message.length>0)?(hX_6._B + e.message):hX_6._E));
+r=false;
+}
+}
+if (this.deferComp) {
+o=hX_6.getComponentById(this.deferComp);
+if (o) for (i=0; i<this.deferCompAtt.length; i++) o.setAttribute(this.deferCompAtt[i][0]+":"+this.deferCompAtt[i][1]);
+}
+if (!hX_6.bodyLoadDone) hX_6.pageReLoadAction();
+if (r) if (this.endFcn!=null) r=hX_6.action.processFunction(this.DOMobj, this.saveEvt, this.endFcn);
+if (this.pauseId) hX_6.action.unPauseActions(this.pauseId);
+this.locked=false;
+}
+HxG_6.prototype.JSFBehaviorAjax.prototype.callbackError=function (err) {
+if (this && this.uirelease) {
+this.uirelease();
+if (this.errorFcn!=null) r=hX_6.action.processFunction(this.DOMobj, null, this.errorFcn, err);
+}
+if (this.pauseId) hX_6.action.unPauseActions(this.pauseId);
+}
+HxG_6.prototype.JSFBehaviorAjax.prototype.uilock=function () {
+this.locked=true;
+hX_6.uirelease();
+}
+HxG_6.prototype.JSFBehaviorAjax.prototype.uirelease=function () {
+this.locked=false;
+if (this.pauseId) hX_6.action.unPauseActions(this.pauseId);
+}
+HxG_6.prototype.JSFBehaviorAjaxGetExternal=function () {
+this.type=hX_6.BHR_ajaxgetexternal;
+this.href=null;
+this.paramNames=[];
+this.paramFields=[];
+this.title=null;
+this.actions=[];
+this.targets= [];
+this.source=null;
+this.startFcn=null;
+this.endFcn=null;
+this.errorFcn=null;
+this.a_hreflang=null;
+this.a_charset=null;
+this.attributeTable=[];
+this.attributeTable ['href']=['href',			hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['progress-actions']=['actions',		hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['params']=['paramNames',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['param-fields']= ['paramFields',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['source']=['source',		hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['title']=['title',			hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['on-start']=['startFcn',		hX_6.ARG_TO_FCNS,	false,	null,	null];
+this.attributeTable ['on-complete']=['endFcn',		hX_6.ARG_TO_FCNS,	false,	null,	null];
+this.attributeTable ['on-error']=['errorFcn',		hX_6.ARG_TO_FCNS,	false,	null,	null];
+this.attributeTable ['hreflang']=['a_hreflang',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['charset']=['a_charset',		hX_6.ARG_TO_NAN,	false,	null,	null];
+this.setAttribute(arguments);
+}
+HxG_6.prototype.JSFBehaviorAjaxGetExternal.prototype=new hX_6.JSFBehaviorAjax();
+HxG_6.prototype.JSFBehaviorAjaxGet=function () {
+this.type=hX_6.BHR_ajaxget;
+this.paramNames=[];
+this.paramFields=[];
+this.title=null;
+this.actions=[];
+this.targets= [];
+this.startFcn=null;
+this.endFcn=null;
+this.errorFcn=null;
+this.href=null;
+this.source=null;
+this.attributeTable=[];
+this.attributeTable ['progress-actions']=['actions',		hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['href']=['href',			hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['params']=['paramNames',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['param-fields']= ['paramFields',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['title']=['title',			hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['on-start']=['startFcn',		hX_6.ARG_TO_FCNS,	false,	null,	null];
+this.attributeTable ['on-complete']=['endFcn',		hX_6.ARG_TO_FCNS,	false,	null,	null];
+this.attributeTable ['on-error']=['errorFcn',		hX_6.ARG_TO_FCNS,	false,	null,	null];
+this.setAttribute(arguments);
+}
+HxG_6.prototype.JSFBehaviorAjaxGet.prototype=new hX_6.JSFBehaviorAjax();
+HxG_6.prototype.JSFBehaviorAjaxSubmit=function () {
+this.type=hX_6.BHR_ajaxsubmit;
+this.title=null;
+this.actions=[];
+this.targets= [];
+this.startFcn=null;
+this.endFcn=null;
+this.errorFcn=null;
+this.href=null;
+this.paramNames=[];
+this.paramFields=[];
+this.source=null;
+this.attributeTable=[];
+this.attributeTable ['progress-actions']=['actions',		hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['href']=['href',			hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['title']=['title',			hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['on-start']=['startFcn',		hX_6.ARG_TO_FCNS,	false,	null,	null];
+this.attributeTable ['on-complete']=['endFcn',		hX_6.ARG_TO_FCNS,	false,	null,	null];
+this.attributeTable ['on-error']=['errorFcn',		hX_6.ARG_TO_FCNS,	false,	null,	null];
+this.setAttribute(arguments);
+}
+HxG_6.prototype.JSFBehaviorAjaxSubmit.prototype=new hX_6.JSFBehaviorAjax();

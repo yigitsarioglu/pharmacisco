@@ -65,7 +65,7 @@ def get_hash(text):
     # if the user clears the translated cells, or we keep a hash of the original text.
     pass
 
-def translate_database(limit=10):
+def translate_database(limit=10, force_id=None):
     """
     Scans the database and translates rows that have empty translation columns.
     limit: How many rows to translate in one run (to avoid blocking/banning).
@@ -77,20 +77,31 @@ def translate_database(limit=10):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
-    # Find rows where AT LEAST ONE of the translations is missing
-    cursor.execute("""
-        SELECT id, name, category, short_instruction, full_instruction,
-               name_en, name_ru, name_ar,
-               category_en, category_ru, category_ar,
-               short_instruction_en, short_instruction_ru, short_instruction_ar,
-               full_instruction_en, full_instruction_ru, full_instruction_ar
-        FROM drugs
-        WHERE (name_en IS NULL OR name_ru IS NULL OR name_ar IS NULL)
-           OR (category_en IS NULL OR category_ru IS NULL OR category_ar IS NULL)
-           OR (short_instruction_en IS NULL OR short_instruction_ru IS NULL OR short_instruction_ar IS NULL)
-           OR (full_instruction_en IS NULL OR full_instruction_ru IS NULL OR full_instruction_ar IS NULL)
-        LIMIT ?
-    """, (limit,))
+    if force_id:
+        cursor.execute("""
+            SELECT id, name, category, short_instruction, full_instruction,
+                   name_en, name_ru, name_ar,
+                   category_en, category_ru, category_ar,
+                   short_instruction_en, short_instruction_ru, short_instruction_ar,
+                   full_instruction_en, full_instruction_ru, full_instruction_ar
+            FROM drugs
+            WHERE id = ?
+        """, (force_id,))
+    else:
+        # Find rows where AT LEAST ONE of the translations is missing
+        cursor.execute("""
+            SELECT id, name, category, short_instruction, full_instruction,
+                   name_en, name_ru, name_ar,
+                   category_en, category_ru, category_ar,
+                   short_instruction_en, short_instruction_ru, short_instruction_ar,
+                   full_instruction_en, full_instruction_ru, full_instruction_ar
+            FROM drugs
+            WHERE (name_en IS NULL OR name_ru IS NULL OR name_ar IS NULL)
+               OR (category_en IS NULL OR category_ru IS NULL OR category_ar IS NULL)
+               OR (short_instruction_en IS NULL OR short_instruction_ru IS NULL OR short_instruction_ar IS NULL)
+               OR (full_instruction_en IS NULL OR full_instruction_ru IS NULL OR full_instruction_ar IS NULL)
+            LIMIT ?
+        """, (limit,))
     
     rows = cursor.fetchall()
     
@@ -170,7 +181,7 @@ def force_retranslate_drug(drug_id):
     conn.close()
     
     # Translate just this one
-    translate_database(limit=1)
+    translate_database(force_id=drug_id)
 
 if __name__ == "__main__":
     print("====================================")

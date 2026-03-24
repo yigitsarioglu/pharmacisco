@@ -48,28 +48,42 @@ function scrapeData() {
             let periodTypeSelect = document.getElementById(`f:tbl1:${i}:m1`);
             let freqInput = document.getElementById(`f:tbl1:${i}:t3`);
             let doseInput = document.getElementById(`f:tbl1:${i}:t4`);
+            let expiryInput = document.getElementById(`f:tbl1:${i}:t10`); // Bitiş Tarihi
 
             let usageStr = "";
+            let periodAmount = "1";
+            let periodType = "Günde";
+            let freqStr = "1";
+            let doseStr = "1.0";
+            let expiryDate = "";
+
+            if (expiryInput) {
+                expiryDate = expiryInput.innerText.trim() || expiryInput.value || "";
+            }
+
             if (periodAmountInput && periodTypeSelect && freqInput && doseInput) {
-                let periodAmount = periodAmountInput.value || "1";
+                periodAmount = periodAmountInput.value || "1";
                 // Select elementinden seçili metni bulalım
-                let periodType = "Günde";
                 if (periodTypeSelect.selectedIndex >= 0) {
                     periodType = periodTypeSelect.options[periodTypeSelect.selectedIndex].text;
                 }
                 
-                let freq = freqInput.value || "1";       // Kaç kere (Örn: 2)
-                let dose = doseInput.value || "1.0";     // Kaç adet (Örn: 1,0)
+                freqStr = freqInput.value || "1";       // Kaç kere (Örn: 2)
+                doseStr = doseInput.value || "1.0";     // Kaç adet (Örn: 1,0)
                 
                 // Virgüllü ise daha temiz gözükmesi için örneğin 1,0 -> 1 yapabiliriz, ama şimdilik orijinal metni koruyoruz.
-                usageStr = `${periodAmount} ${periodType} ${freq} x ${dose} doz`;
+                usageStr = `${periodAmount} ${periodType} ${freqStr} x ${doseStr} doz`;
             }
 
             // Listeye it
             data.drugs.push({
                 name: name,
                 barcode: barcode,
-                usage: usageStr
+                usage: usageStr,
+                freq: freqStr,
+                dose: doseStr,
+                period_type: periodType,
+                expiry_date: expiryDate
             });
 
             i++;

@@ -1,0 +1,100 @@
+if(hX_6.L["tr"]==null)hX_6.L["tr"]=new Object();
+hX_6.L["tr"].STR_SPINNER_INCREMENT="Artma";
+hX_6.L["tr"].STR_SPINNER_DECREMENT="Azalma";
+hX_6.L["tr"].STR_TABPANEL_SCROLLLEFT="Sola Kayd\u0131r";
+hX_6.L["tr"].STR_TABPANEL_SCROLLRIGHT="Sa\u011fa Kayd\u0131r";
+hX_6.L["tr"].STR_SLIDER_LABEL="Kayd\u0131r\u0131c\u0131y\u0131 G\u00f6ster";
+hX_6.L["tr"].STR_COLOR_DN_TOGGLE="Renkleri G\u00f6ster";
+hX_6.L["tr"].STR_TIME_DN_TOGGLE="Saatleri G\u00f6ster";
+hX_6.L["tr"].STR_DATE_DN_TOGGLE="Takvimi G\u00f6ster";
+hX_6.L["tr"].STR_DATE_PREVIOUS_YEAR="\u00d6nceki y\u0131l";
+hX_6.L["tr"].STR_DATE_NEXT_YEAR="Sonraki y\u0131l";
+hX_6.L["tr"].STR_DATE_PREVIOUS_MONTH="\u00d6nceki ay";
+hX_6.L["tr"].STR_DATE_NEXT_MONTH="Sonraki ay";
+hX_6.L["tr"].STR_TIMEZONES=[
+["+0000", "GMT", "+0000", "GMT",  "Greenwich Mean Time"],
+["-0400", "AST", "-0300", "ADT",  "Atlantik Saati (Kanada)"],
+["-0500", "EST", "-0400", "EDT",  "Do\u011fu Saati (ABD ve Kanada)"],
+["-0600", "CST", "-0500", "CDT",  "Merkez Saat (ABD ve Kanada) "],
+["-0700", "MST", "-0600", "MDT",  "S\u0131rada\u011flar Saati (ABD ve Kanada)"],
+["-0800", "PST", "-0700", "PDT",  "Pasifik Saati (ABD ve Kanada)"],
+["-1000", "HST", "-0900", "HDT",  "Hawaii"],
+["","","",""]];
+hX_6.L["tr"].ERR_datetime_parse_fail= "\"{0}\", tarih ya da saat olarak yorumlanam\u0131yor. ";
+hX_6.L["tr"].ERR_epoch_name="\"{0}\", tarih olarak yorumlanam\u0131yor. D\u00f6nem yanl\u0131\u015f.";
+hX_6.L["tr"].ERR_day_name="\"{0}\", tarih olarak yorumlanam\u0131yor. G\u00fcn ad\u0131 yanl\u0131\u015f.";
+hX_6.L["tr"].ERR_month_name="\"{0}\", tarih olarak yorumlanam\u0131yor. Ay ad\u0131 yanl\u0131\u015f. ";
+hX_6.L["tr"].ERR_month_range="\"{0}\", tarih olarak yorumlanam\u0131yor. Ay 1 - 12 aras\u0131nda bir de\u011fer olmal\u0131.";
+hX_6.L["tr"].ERR_month_rangelimit="\"{0}\", tarih olarak yorumlanam\u0131yor. {1} i\u00e7inde {2} g\u00fcn yok. ";
+hX_6.L["tr"].ERR_epoch_range="\"{0}\", tarih olarak yorumlanam\u0131yor. Y\u0131l yanl\u0131\u015f. ";
+hX_6.L["tr"].ERR_hour_range_long="\"{0}\", saat olarak yorumlanam\u0131yor. Saat 0 - 23 aras\u0131nda bir de\u011fer olmal\u0131.";
+hX_6.L["tr"].ERR_hour_range_short="\"{0}\", saat olarak yorumlanam\u0131yor. Saat 1 - 12 aras\u0131nda bir de\u011fer olmal\u0131. ";
+hX_6.L["tr"].ERR_minute_range="\"{0}\", saat olarak yorumlanam\u0131yor. Dakika 0 - 59 aras\u0131nda bir de\u011fer olmal\u0131. ";
+hX_6.L["tr"].ERR_second_range="\"{0}\", saat olarak yorumlanam\u0131yor. Saniye 0 - 59 aras\u0131nda bir de\u011fer olmal\u0131. ";
+hX_6.L["tr"].ERR_ampm_name="\"{0}\", saat olarak yorumlanam\u0131yor. Saatin AM/PM g\u00f6stergesi olmal\u0131.";
+hX_6.L["tr"].ERR_tzone_name="\"{0}\", saat olarak yorumlanam\u0131yor. Saat dilimi yanl\u0131\u015f. ";
+hX_6.L["tr"].ERR_generic="Bu de\u011fer yorumlanam\u0131yor. ";
+hX_6.L["tr"].ERR_empty="De\u011fer girilmedi\u011finden bu de\u011fer yorumlanam\u0131yor. ";
+hX_6.L["tr"].ERR_minimum="Sunulan de\u011fer, izin verilen de\u011fer alt s\u0131n\u0131r\u0131ndan daha k\u00fc\u00e7\u00fck. ";
+hX_6.L["tr"].ERR_maximum="Sunulan de\u011fer, izin verilen de\u011fer \u00fcst s\u0131n\u0131r\u0131ndan daha b\u00fcy\u00fck. ";
+hX_6.L["tr"].ERR_required="Bu de\u011fer gerekli. ";
+hX_6.L["tr"].ERR_constraint="Bu de\u011fer yorumlanam\u0131yor. Basamaklar\u0131n bi\u00e7imi ya da alfabetik karakterler yanl\u0131\u015f.";
+hX_6.L["tr"].ERR_number_fail="\"{0}\", say\u0131 olarak yorumlanam\u0131yor.";
+hX_6.L["tr"].ERR_number_char="\"{0}\", say\u0131 olarak yorumlanam\u0131yor. \"{1}\", ge\u00e7erli bir karakter de\u011fil.";
+hX_6.L["tr"].STRA_DATE_MONTHS = 
+//Gregorian...
+[["Ocak","\u015eubat","Mart","Nisan","May\u0131s","Haziran","Temmuz","A\u011fustos","Eyl\u00fcl","Ekim","Kas\u0131m","Aral\u0131k"],
+//Islamic...
+["Muharrem","Safer","Rebi\u00fclevvel","Rebi\u00fclahir","Cemaziyelevvel","Cemaziyelahir","Recep","\u015eaban","Ramazan","\u015eevval","Zilkade","Zilhicce"],
+//Hebrew...
+["Nisan","\u0130yar","Sivan","Tamuz","Av","Elul","Adar II","He\u015fvan","Kislev","Tevet","\u015eevat","Veadar","Adar"]];
+hX_6.L["tr"].STRA_DATE_SAMONTHS = 
+//Gregorian...
+[["Ocak","\u015eubat","Mart","Nisan","May\u0131s","Haziran","Temmuz","A\u011fustos","Eyl\u00fcl","Ekim","Kas\u0131m","Aral\u0131k"],
+//Islamic...
+["Muharrem","Safer","Rebi\u00fclevvel","Rebi\u00fclahir","Cemaziyelevvel","Cemaziyelahir","Recep","\u015eaban","Ramazan","\u015eevval","Zilkade","Zilhicce"],
+//Hebrew...
+["Nisan","\u0130yar","Sivan","Tamuz","Av","Elul","Adar II","He\u015fvan","Kislev","Tevet","\u015eevat","Veadar","Adar"]];
+hX_6.L["tr"].STRA_DATE_SHMONTHS = 
+//Gregorian...
+[["Oca","\u015eub","Mar","Nis","May","Haz","Tem","A\u011fu","Eyl","Eki","Kas","Ara"],
+//Islamic...
+["Muharrem","Safer","Rebi\u00fclevvel","Rebi\u00fclahir","Cemaziyelevvel","Cemaziyelahir","Recep","\u015eaban","Ramazan","\u015eevval","Zilkade","Zilhicce"],
+//Hebrew...
+["Ti\u015fri","He\u015fvan","Kislev","Tevet","\u015eevat","Veadar","Adar","Nisan","\u0130yar","Sivan","Tamuz","Av","Elul","Adar II"]];
+hX_6.L["tr"].STRA_DATE_DAYS = 
+//Gregorian...
+[["Pazar","Pazartesi","Sal\u0131","\u00c7ar\u015famba","Per\u015fembe","Cuma","Cumartesi"],
+//Islamic...
+["Pazar","Pazartesi","Sal\u0131","\u00c7ar\u015famba","Per\u015fembe","Cuma","Cumartesi"],
+//Hebrew...
+["Pazar","Pazartesi","Sal\u0131","\u00c7ar\u015famba","Per\u015fembe","Cuma","Cumartesi"]];
+hX_6.L["tr"].STRA_DATE_SHDAYS = 
+//Gregorian...
+[["Paz","Pzt","Sal","\u00c7ar","Per","Cum","Cmt"],
+//Islamic...
+["Paz","Pzt","Sal","\u00c7ar","Per","Cum","Cmt"],
+//Hebrew...
+["Paz","Pzt","Sal","\u00c7ar","Per","Cum","Cmt"]];
+hX_6.L["tr"].STRA_DATE_SHSHDAYS = 
+//Gregorian...
+[["P","P","S","\u00c7","P","C","C"],
+//Islamic...
+["P","P","S","\u00c7","P","C","C"],
+//Hebrew...
+["P","P","S","\u00c7","P","C","C"]];
+hX_6.L["tr"].STRA_DATE_EPOCHS = [
+//Christian Gregorian Calendar, two epochs -- religious form
+[["--","M\u00d6"],["--","MS"]],
+//Hijiri (Islamic) Calendar, one epoch -- the date of the haj
+[["--","--"],["--","Hicri"]],
+// Hebrew Calendar, one epoch -- the date of the creation of the world
+[["--","--"],["--","AM"]],
+//Buddhist Gregorian Calendar, one epoch -- the birth of The Buddha
+[["--","--"],["--","BE"]],
+//Japanese Gregorian Calendar, reigns of the emperors -- Meiji period and later
+[["--","Meiji"],["--","Taish\u014d"],["--","Sh\u014dwa"],["--","Heisei"]]
+];
+//Default AM and PM suffixes
+hX_6.L["tr"].STR_AM_SUFFIX = "\u00d6\u00d6";
+hX_6.L["tr"].STR_PM_SUFFIX = "\u00d6S";

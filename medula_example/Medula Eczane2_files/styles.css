@@ -1,0 +1,239 @@
+a  { color : #0033CC; text-decoration : none; }
+a:hover { color : Red; text-decoration : underline; }
+form { margin: 0px; }
+
+.headerWhiteLink  { 
+	color : #FFFFFF;
+	text-decoration : none;
+}
+
+.button { 
+	height:19px; border:none;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	text-decoration: none;
+	color: #FFFFFF;
+	font-weight: bold; 
+	background-image:url('../interface/buttonBack.jpg'); cursor:hand; }
+
+.headerLink {
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	text-decoration: none;
+	color: #2651A0;
+	font-weight: bold;
+}
+
+.toolbarText {
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	text-decoration: none;
+	color: Black;
+}
+
+.loggedInUserMenu {
+	background-image:url('../interface/buttonBack.jpg');
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	text-decoration: none;
+	color: White;
+	font-weight: bold;
+}
+
+.menuHeader {
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	text-decoration: none;
+	color: White;
+	font-weight: bold;
+	height:22px;
+	background-image:url('../images/buttonBack.jpg');
+}
+
+.menuText {
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	text-decoration: none;
+	color: #354053;
+}
+
+.footerText {
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	text-decoration: none;
+	color: White;
+	font-weight: bold;
+}
+
+.paragraph {
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	text-decoration: none;
+	color: Black;
+}
+.headerRow { 
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #FFFFFF;
+	font-weight: bold;
+	background-color: #637595;
+	height: 21px;
+}
+.row1 { 
+	background-color: #FAFAFA;
+	height: 25px;
+	font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 11px;
+}
+.row2 { 
+	background-color: #D5DAE3;
+	height: 25px;
+	font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 11px;
+}
+.row3 { 
+	background-color: #EBEDF1; height: 25px;
+}
+
+.row4 { 
+	background-color: #FAF8CC;
+	height: 25px;
+	font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 11px;
+}
+.row5{ 
+	background-color: #FFEBE3;
+	height: 25px;
+	font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 11px;
+}
+.row6 { 
+	background-color: #FCFAF6; height: 5px;
+}
+.row7 { 
+	background-color: #FAFAFA;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 11px;
+	color: black;	
+}
+.row8 { 
+	background-color: #FCFAF6; height: 2px;
+}
+.rowGreen { 
+	background-color: #95FF95;
+	height: 25px;
+	font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 11px;
+	color: black;		
+}
+.rowYellow { 
+	background-color: #FFFF7F;
+	height: 25px;
+	font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 11px;
+	color: black;		
+}
+.rowRed { 
+	background-color: #FF0000;
+	height: 25px;
+	font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 11px;
+	color: black;		
+}
+
+.rowRed2{ 
+    background-color: #FAFAFA;
+	height: 25px;
+	font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 11px;
+	color: #FF0000;		
+}
+
+.summary{
+	background-color: #637595;
+	height: 25px;
+	color:white;
+	font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 11px;
+	font: bold;
+	
+}
+
+.label { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 11px; }
+
+.message { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold; color: #DE2121}
+.tab { 
+	cursor: hand;
+	height: 23px;
+	padding: 4px 6px 1px 6px;
+	border-top: 1px solid #9DB1BA;
+	border-bottom: 1px solid #9DB1BA;
+	border-right: 1px solid #9DB1BA;
+	border-left: 1px solid #9DB1BA;
+	background-color: #F0F0EB;
+	font: bold 11px Verdana;
+	color: #718E9B; }
+.tabHighlighted { 
+	cursor: hand; height: 23px;
+	padding: 5px 6px 1px 6px;
+	border-top: 0px solid #FFC73C;
+	border-bottom: 1px solid #9DB1BA;
+	border-right: 1px solid #9DB1BA;
+	border-left: 1px solid #9DB1BA;
+	background:url('../images/tabHighlightLine.gif') repeat-x top;
+	background-color: #DBE2F0;
+	font: bold 11px Verdana; color: #ff6600; }
+.tabSelected { cursor: default; height: 23px; padding: 4px 6px 1px 6px;
+				border-top: 0px solid #FFC73C; border-bottom: 0px solid #9DB1BA;
+				border-right: 1px solid #9DB1BA; border-left: 1px solid #9DB1BA;
+				background: url(../images/tabHighlightLine.gif) repeat-x top;
+				background-color: #DBE2F0; font: bold 11px Verdana; color: #000000; }
+.tabTable { border-top: 0px solid #9DB1BA; border-bottom: 1px solid #9DB1BA; border-right: 1px solid #9DB1BA; border-left: 1px solid #9DB1BA; background-color: #FCFCFC; }
+.borderTable2 { border-top: 1px solid #9DB1BA;
+				border-bottom: 1px solid #9DB1BA;
+				border-right: 1px solid #9DB1BA;
+				border-left: 1px solid #9DB1BA;
+				background-color: #FCFCFC; }
+.disabled { font-family: Verdana, Arial, Helvetica, sans-serif; font-size:11px; border:1px solid #7293C8; height:19px; background-color:#DEDEDE; }
+
+
+
+a.hxButtonLike {
+    display: block !important;
+    position: relative !important;
+
+    width: 165px !important;
+    height: 20px !important;
+
+    background-image: url("/eczane/theme/button.png") !important;
+    background-repeat: no-repeat !important;
+    background-position: left top !important;
+    background-size: 165px 20px !important;
+
+    font-family: Arial !important;
+    font-size: 11pt !important;
+    color: #000 !important;
+
+    line-height: 20px !important;
+    text-decoration: none !important;
+    cursor: pointer;
+
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+
+    /* 🔴 Menü satırı arka planını bastır */
+    background-color: transparent !important;
+}
+
+a.hxButtonLike .hxButtonText {
+    position: absolute !important;
+    top: 2px !important;
+    left: 16px !important;
+
+    white-space: nowrap !important;
+    color: #000 !important;
+}
+
+td a.hxButtonLike {
+    background-clip: padding-box !important;
+    z-index: 10 !important;
+}
+
+
+.receteSuccessMessage {
+    color: #2C9C3B;
+}
+

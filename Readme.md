@@ -19,6 +19,8 @@ Yardımcı komutlar (Venv aktifken çalıştırın):
 - veritabanı şeması güncellemesi için: python utils/update_db_schema.py 
 - programı derlemek için (exe dosyası oluşturmak için): python utils/build.bat   
 
+-- program derlendikten sonra dist klasöründe oluşacak olan Pharmacisco klasörünü  innosetup ile derleyip kurulum dosyası oluşturabilirsiniz. exe olarak pharmacisco.exe dosyasını kullanabilirsiniz.
+
 
 Virtual environment kurulumu:
 pip install -r requirements.txt

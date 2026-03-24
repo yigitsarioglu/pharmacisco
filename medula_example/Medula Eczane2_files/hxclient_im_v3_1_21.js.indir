@@ -1,0 +1,832 @@
+HxG_6.prototype.JSFImage=function () {
+this.type=hX_6.CMP_image;
+this.label=null;
+this.imageNormalSrc=this.imageMousedSrc=this.imageDepressedSrc=this.imageDisabledSrc=null;
+this.iconNormalSrc=this.iconMousedSrc=this.iconDepressedSrc=this.iconDisabledSrc=null;
+this.optimizeEvents=this.noResize=false;
+this.outerSpan=this.innerSpan=this.labelTag=this.iconTag=this.mouseDiv=null;
+this.gE=function (s) { return hX_6.g.getP(this.DOMobj, s); }
+this.state=-1;
+hX_6.IMG_DEPRESSEDTimer=null;
+this.isDepressed=this.foundClass=this.iconFromClass=false;
+this.labelAbsolute=this.iconAbsolute=false;
+this.dispType=(hX_6.brw.isIE()) ? hX_6._INB : hX_6._E;
+this.calcClass=hX_6._E;
+this.dispType=(hX_6.brw.isIE()) ? hX_6._INB : hX_6._E;
+this.baseClass=[];
+this.labelClass=[];
+this.iconClass=[];
+this.imageSrc=this.iconSrc=null;
+this.image=[null, null, null, null];
+this.icon=[null, null, null, null];
+this.suffixes=[hX_6.CLASS_BUTTON_MOUSED, hX_6.CLASS_BUTTON_DEPRSD, hX_6.CLASS_BUTTON_DISBLD];
+this.doRealignmentCalcOnceDone=false;
+this.buttonleftoffsemargin=0;
+this.attributeTable=[];
+this.attributeTable ['label']=['label',				hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable	['normal']=['imageNormalSrc',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable	['moused']=['imageMousedSrc',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable	['depressed']=['imageDepressedSrc',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable	['disabled']=['imageDisabledSrc',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['icon-normal']=['iconNormalSrc',		hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['icon-moused']=['iconMousedSrc', 	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['icon-depressed']=['iconDepressedSrc', 	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['icon-disabled']=['iconDisabledSrc',	hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['embedded']=['noResize',			hX_6.ARG_IS_TRUE,	false,	null,	null];
+this.setAttribute(arguments);
+}
+HxG_6.prototype.JSFImage.prototype.onPageLoad=function () {
+if (this.DOMobj && this.DOMobj.src) this.imageNormalSrc=this.DOMobj.src;
+this.addSpansToInput();
+this.setValue(0, true);
+return true;
+}
+HxG_6.prototype.JSFImage.prototype.redraw=function () {
+this.sizeImageToAttributes();
+this.setValue(0, true);
+return true;
+}
+HxG_6.prototype.JSFImage.prototype.uirelease=function () {
+this.setValue(0);
+this.isDepressed=false;
+return true;
+}
+HxG_6.prototype.JSFImage.prototype.destroy=function () {
+var o,i,d=[this.baseClass,this.labelClass,this.iconClass,this.imageSrc,this.iconSrc,this.suffixes];
+if (this.mouseDiv) hX_6.removeAllEvents(this.mouseDiv, this.mouseDiv.id);
+for (i=0; i<d.length; i++) {
+if (d[i]) {
+while (d[i].length>0) d[i].pop();
+delete d[i];
+}
+}
+delete d;
+while (this.image.length > 0) {
+o=this.image.pop();
+if (o) delete o;
+}
+delete this.image;
+while (this.icon.length > 0) {
+o=this.icon.pop();
+if (o) delete o;
+}
+if (this.attributeTable) delete this.attributeTable;
+return true;
+}
+HxG_6.prototype.JSFImage.prototype.setValue=function (ivalue, force) {
+var cl=false, j,t,s, v=ivalue, bDisabled=(hX_6.g.isDisabled(this.DOMobj) || this.DOMobj.readOnly);
+v=(bDisabled)?3:v;
+if (this.state!=v && v>=0 && v<=3) {
+t=hX_6.getFirstClassName (this.DOMobj);
+if (t) t=hX_6.stripClassSuffix(t, this.suffixes);
+if (t != this.calcClass) this.prepImages();
+j=(this.image[v]==null || this.image[v].src==null || this.image[v].src.length==0)?0:v;
+if (this.image[j] && this.image[j].src) {
+if (this.DOMobj.tagName==hX_6._IMG || this.DOMobj.type==hX_6._lIMG)
+this.DOMobj.src=this.image[j].src;
+else {
+s=this.wrapURL(j);
+if (this.gE(hX_6._BIMG)!=s) this.DOMobj.style.backgroundImage=s;
+}
+}
+if (this.baseClass[v] && this.baseClass[hX_6.IMG_NORMAL])
+hX_6.appendClassName (this.DOMobj, this.baseClass[v], this.baseClass[hX_6.IMG_NORMAL], true);
+if (this.labelTag && this.labelClass) {
+if (this.labelTag.className != this.labelClass[v]) {
+this.labelTag.className=this.labelClass[v];
+cl=true;
+}
+}
+if (this.iconTag) {
+j=(this.icon[v]==null || this.icon[v].src==null || this.icon[v].src.length==0)?0:v;
+if (this.icon[j] && this.icon[j].src && this.iconTag.src != this.icon[j].src)
+this.iconTag.src=this.icon[j].src;
+if (this.iconClass[v] && this.iconTag.className != this.iconClass[v]) {
+this.iconTag.className=this.iconClass[v];
+cl=true;
+}
+}
+this.state=v;
+}
+if ((force || cl) && (this.innerSpan!=null))this.sizeContentToAttributes();
+return true;
+}
+HxG_6.prototype.JSFImage.prototype.wrapURL=function(img) {
+return (hX_6._URL + hX_6._SQT + hX_6.stripURL(this.imageSrc[img]) + hX_6._SQT + ")");
+}
+HxG_6.prototype.JSFImage.prototype.getValue=function() {
+return this.state;
+}
+HxG_6.prototype.JSFImage.prototype.setAttribute=function(a) {
+hX_6.parseArg (this.attributeTable, this, a);
+this.imageSrc=[this.imageNormalSrc, this.imageMousedSrc, this.imageDepressedSrc, this.imageDisabledSrc];
+this.iconSrc=[this.iconNormalSrc, this.iconMousedSrc, this.iconDepressedSrc, this.iconDisabledSrc];
+if (this.HTMLrendered) this.redraw();
+return true;
+}
+HxG_6.prototype.JSFImage.prototype.getAttribute=function (attribute) {
+return (hX_6.getArg(this.attributeTable, this, attribute));
+}
+HxG_6.prototype.JSFImage.prototype.dispatchRelay=function (evt) {
+if ((typeof hX_6)=="undefined") return true;
+var obj, r=true;
+evt=(evt) ? evt : ((event) ? event: null);
+if (evt && this) {
+obj=(this.parentNode && this.parentNode.firstChild) ? (hX_6.getComponentById(this.parentNode.firstChild.id)) : null;
+if (obj) {
+if (hX_6.g.isDisabled(obj.DOMobj)) r=false;
+else {
+if (evt.type==hX_6._evMC) {
+if (obj.DOMobj.click && hX_6.brw.isIE()) obj.DOMobj.click();
+else hX_6.i.fireEvent(obj.DOMobj, hX_6._onMC)
+hX_6.i.cancelAction(evt, true);
+r=false;
+} else {
+r=hX_6.runEvent(obj.DOMobj, evt, false, true);
+}
+}
+}
+}
+return r;
+}
+HxG_6.prototype.JSFImage.prototype.dispatchTimer= function (id, item, action) {
+if ((typeof hX_6)=="undefined") return;
+if (item == "redraw") {
+this.sizeContentToAttributes();
+} else {
+hX_6.IMG_DEPRESSEDTimer=null;
+if (this.isDepressed) {
+this.isDepressed=false;
+this.dispatchComponent(hX_6._lINP, null, hX_6._evMO, null);
+}
+}
+}
+HxG_6.prototype.JSFImage.prototype.dispatchComponent=function (item, evt, action, keycode) {
+var newvalue=-1, r=(hX_6.g.isDisabled(this.DOMobj))?false:true;
+if (this.DOMobj != null)
+switch (action) {
+case hX_6._evB:
+case hX_6._evKU:
+newvalue=0;
+if (this.isDepressed && hX_6.IMG_DEPRESSEDTimer) hX_6.i.killTimerTimed(hX_6.IMG_DEPRESSEDTimer);
+this.isDepressed=false;
+break;
+case hX_6._evMO:
+newvalue=0;
+if (this.isDepressed) hX_6.IMG_DEPRESSEDTimer=hX_6.i.startTimerTimed(this.DOMobj.id, "depress", "depress", 2000);
+break;
+case hX_6._evMU:
+newvalue=1;
+if (this.isDepressed && hX_6.IMG_DEPRESSEDTimer) hX_6.i.killTimerTimed(hX_6.IMG_DEPRESSEDTimer);
+this.isDepressed=false;
+break;
+case hX_6._evMC:
+if (evt.button>1) r=false;
+break;
+case hX_6._evMV:
+newvalue=(this.isDepressed && hX_6.IMG_DEPRESSEDTimer) ? 2 : 1;
+if (this.isDepressed && hX_6.IMG_DEPRESSEDTimer) hX_6.i.killTimerTimed(hX_6.IMG_DEPRESSEDTimer);
+break;
+case hX_6._evMD:
+if (evt.button<=1) {
+newvalue=2;
+this.isDepressed=true;
+}
+break;
+case hX_6._evKD:
+if (keycode == hX_6.KEY_SPACEBAR || keycode == hX_6.KEY_ENTER)
+newvalue=2;
+break;
+}
+if (newvalue >= 0) this.setValue(newvalue);
+if (!r) hX_6.i.cancelAction(evt, true);
+return r;
+}
+HxG_6.prototype.JSFImage.prototype.prepImages=function () {
+if (!this.HTMLrendered && this.DOMobj.src!=undefined && this.DOMobj.src.length > 0 && this.imageSrc[hX_6.IMG_NORMAL] == null)
+this.imageNormalSrc=this.DOMobj.src;
+this.imageSrc=[this.imageNormalSrc, this.imageMousedSrc, this.imageDepressedSrc, this.imageDisabledSrc];
+this.iconSrc=[this.iconNormalSrc, this.iconMousedSrc, this.iconDepressedSrc, this.iconDisabledSrc];
+var i,c,t=hX_6.getFirstClassName (this.DOMobj);
+if (t) t=hX_6.stripClassSuffix(t, this.suffixes);
+if (this.calcClass==hX_6._E || this.calcClass != t) {
+if (t == null) {
+this.baseClass[hX_6.IMG_MOUSED]=this.baseClass[hX_6.IMG_DEPRESSED]=this.baseClass[hX_6.IMG_DISABLED]=t;
+this.labelClass[hX_6.IMG_MOUSED]=this.labelClass[hX_6.IMG_DEPRESSED]=this.labelClass[hX_6.IMG_DISABLED]=hX_6._E;
+this.iconClass[hX_6.IMG_MOUSED]=this.iconClass[hX_6.IMG_DEPRESSED]=this.iconClass[hX_6.IMG_DISABLED]=hX_6._E;
+} else if (t != this.baseClass[hX_6.IMG_NORMAL]) {
+this.foundClass=false;
+this.baseClass[hX_6.IMG_NORMAL]=t;
+this.prepClass(t, hX_6.CLASS_BUTTON_MOUSED, this.baseClass, hX_6.IMG_MOUSED);
+this.prepClass(t, hX_6.CLASS_BUTTON_DEPRSD, this.baseClass, hX_6.IMG_DEPRESSED);
+this.prepClass(t, hX_6.CLASS_BUTTON_DISBLD, this.baseClass, hX_6.IMG_DISABLED);
+c=t + hX_6.CLASS_BUTTON_LABEL;
+if (hX_6.isClassDefined(c)) {
+this.labelClass[hX_6.IMG_NORMAL]=c;
+this.prepClass(c, hX_6.CLASS_BUTTON_MOUSED, this.labelClass, hX_6.IMG_MOUSED);
+this.prepClass(c, hX_6.CLASS_BUTTON_DEPRSD, this.labelClass, hX_6.IMG_DEPRESSED);
+this.prepClass(c, hX_6.CLASS_BUTTON_DISBLD, this.labelClass, hX_6.IMG_DISABLED);
+} else
+ this.labelClass[hX_6.IMG_NORMAL]=this.labelClass[hX_6.IMG_MOUSED]=this.labelClass[hX_6.IMG_DEPRESSED]=this.labelClass[hX_6.IMG_DISABLED]=hX_6._E;
+c=t + hX_6.CLASS_BUTTON_ICON;
+if (hX_6.isClassDefined(c)) {
+this.prepClass(c, hX_6._E,                  this.iconClass, hX_6.IMG_NORMAL, this.iconSrc);
+this.prepClass(c, hX_6.CLASS_BUTTON_MOUSED, this.iconClass, hX_6.IMG_MOUSED, this.iconSrc);
+this.prepClass(c, hX_6.CLASS_BUTTON_DEPRSD, this.iconClass, hX_6.IMG_DEPRESSED, this.iconSrc);
+this.prepClass(c, hX_6.CLASS_BUTTON_DISBLD, this.iconClass, hX_6.IMG_DISABLED, this.iconSrc);
+} else
+ this.iconClass[hX_6.IMG_NORMAL]=this.iconClass[hX_6.IMG_MOUSED]=this.iconClass[hX_6.IMG_DEPRESSED]=this.iconClass[hX_6.IMG_DISABLED]=hX_6._E;
+}
+this.calcClass=t;
+}
+for (i=hX_6.IMG_NORMAL; i<=hX_6.IMG_DISABLED; i++) this.prepImage(this.imageSrc, this.image, i);
+if (this.iconSrc[hX_6.IMG_NORMAL])
+for (i=hX_6.IMG_NORMAL; i<=hX_6.IMG_DISABLED; i++) this.prepImage(this.iconSrc, this.icon, i);
+}
+HxG_6.prototype.JSFImage.prototype.prepImage=function (src, imp, state) {
+if (src[state] && src[state].length > 0) {
+if (imp[state] == null) imp[state]=new Image(50,50);
+imp[state].src=hX_6.stripURL(src[state]);
+} else
+ imp[state]=null;
+}
+HxG_6.prototype.JSFImage.prototype.prepClass=function (base, suffix, imp, state, imgsrc) {
+var im, c=base+suffix, isC=hX_6.isClassDefined(c);
+this.foundClass=(this.foundClass || suffix==hX_6._E) ? this.foundClass : isC;
+imp[state]=(isC) ? c : base;
+if (arguments.length > 4 && isC && (this.iconFromClass || this.iconSrc[state] == null)) {
+im=hX_6.getClassStyle(c, hX_6._BIMG);
+if (im && im.length > 0) {
+this.iconFromClass=true;
+this.iconSrc[state]=im;
+}
+}
+}
+HxG_6.prototype.JSFImage.prototype.addSpansToInput=function () {
+if (!this.DOMobj) return false;
+this.prepImages();
+if (this.DOMobj.tagName==hX_6._IMG || this.DOMobj.type==hX_6._lIMG) {
+if (this.image && this.image[hX_6.IMG_NORMAL])
+this.DOMobj.setAttribute(hX_6._SRC, this.image[hX_6.IMG_NORMAL].src);
+else if (this.DOMobj.src==null || this.DOMobj.src.length==0)
+this.DOMobj.setAttribute(hX_6._SRC, this.r.getURL(hX_6.R_IMG_SPACER));
+} else {
+if (this.image && this.image[hX_6.IMG_NORMAL]) {
+if (this.gE(hX_6._BPOS) != hX_6._NREP) this.DOMobj.style.backgroundRepeat=hX_6._NREP;
+if ((hX_6.brw.isNavOrMoz() && hX_6.g.getP(this.DOMobj, hX_6._BRWID)==hX_6._E) ||
+(hX_6.brw.isIE() && hX_6.g.getP(this.DOMobj, hX_6._BRWID)==hX_6._2PX && hX_6.g.getP(this.DOMobj, hX_6._BRSTY)==hX_6._OUT && hX_6.g.getP(this.DOMobj, hX_6._BRCOR)==hX_6.CLR_BLK)) {
+this.DOMobj.style.borderWidth=hX_6._ZPX;
+this.DOMobj.style.backgroundColor=hX_6._TRN
+ }
+var s=this.wrapURL(hX_6.IMG_NORMAL);
+if (this.gE(hX_6._BIMG)!=s) this.DOMobj.style.backgroundImage=s;
+}
+}
+if (this.label || this.iconSrc[hX_6.IMG_NORMAL]) {
+var tag, d=this.gE(hX_6._DSP);
+tag=document.createElement(hX_6._SPN);
+tag.setAttribute (hX_6._ID, this.DOMobj.id + "_SPAN");
+tag.style.position=(this.gE(hX_6._POS)!=hX_6._ABS)?hX_6._REL:hX_6._ABS;
+tag.style.display=(d==hX_6._E)?this.dispType:d;
+tag.style.visibility= this.gE(hX_6._VIS);
+tag.style.margin=tag.style.padding=tag.style.borderWidth=hX_6._ZPX;
+tag.style.left=this.gE(hX_6._LFT);
+tag.style.right=this.gE(hX_6._RGT);
+tag.style.top=this.gE(hX_6._TOP);
+tag.style.bottom= this.gE(hX_6._BOT);
+this.DOMobj.style.position=hX_6._REL;
+this.DOMobj.style.left=this.DOMobj.style.top=hX_6._ZPX;
+this.DOMobj.style.bottom=this.DOMobj.style.right=hX_6._E;
+if (hX_6.brw.isIE()) this.DOMobj.style.textIndent=hX_6._ZPX;
+if (hX_6.brw.isIE()) this.DOMobj.style.padding=hX_6._ZPX;
+this.outerSpan=this.DOMobj.parentNode.insertBefore(tag, this.DOMobj);
+this.outerSpan.appendChild(this.DOMobj);
+tag=document.createElement(hX_6._SPN);
+tag.setAttribute(hX_6._ID, this.DOMobj.id + "_SPN");
+tag.style.position=hX_6._ABS;
+tag.style.left=tag.style.top=hX_6._1PX;
+tag.style.display=this.dispType;
+tag.style.overflow=hX_6._HI;
+tag.style.zIndex=hX_6._1;
+tag.style.textIndent=tag.style.margin=tag.style.padding=tag.style.borderWidth=hX_6._ZPX;
+this.innerSpan=this.outerSpan.appendChild(tag);
+if (this.icon[hX_6.IMG_NORMAL]) {
+tag=document.createElement(hX_6._IMG);
+tag.setAttribute(hX_6._ID, this.DOMobj.id + "_ICON");
+tag.setAttribute(hX_6._SRC, this.icon[hX_6.IMG_NORMAL].src);
+tag.setAttribute(hX_6._BRD, hX_6._Z);
+this.iconAbsolute=(hX_6._ABS == hX_6.getClassStyle(this.iconClass[hX_6.IMG_NORMAL], hX_6._POS));
+tag.style.position=hX_6._ABS;
+if (!this.iconAbsolute)	tag.style.left=tag.style.top=hX_6._ZPX;
+tag.style.textIndent=hX_6._ZPX;
+tag.style.display=hX_6._E;
+tag.style.zIndex=hX_6._1;
+if (this.iconFromClass) tag.style.backgroundImage=hX_6._NO;
+this.iconTag=this.innerSpan.appendChild(tag);
+}
+if (this.label) {
+tag=document.createElement(hX_6._SPN);
+tag.setAttribute (hX_6._ID, this.DOMobj.id + "_LABEL");
+this.labelAbsolute=(this.labelClass[hX_6.IMG_NORMAL])?(hX_6._ABS == hX_6.getClassStyle(this.labelClass[hX_6.IMG_NORMAL], hX_6._POS)):false;
+tag.style.position=hX_6._ABS;
+if (!this.labelAbsolute) tag.style.left=tag.style.top=hX_6._ZPX;
+tag.style.textIndent=hX_6._ZPX;
+tag.style.display=this.dispType;
+tag.style.zIndex=hX_6._2;
+this.labelTag=this.innerSpan.appendChild(tag);
+}
+if (this.DOMobj.tagName == hX_6._IMG)
+tag=document.createElement(hX_6._IMG)
+else {
+tag=document.createElement(hX_6._INP);
+tag.setAttribute(hX_6._TYP, hX_6._lIMG);
+}
+tag.setAttribute(hX_6._ID, this.DOMobj.id + "_MOUSE");
+tag.setAttribute(hX_6._SRC, this.r.getURL(hX_6.R_IMG_SPACER));
+tag.tabIndex=hX_6.__1;
+tag.style.zIndex="3";
+tag.style.position=hX_6._ABS;
+tag.style.left=tag.style.top=hX_6._ZPX;
+tag.style.textIndent=tag.style.margin=tag.style.padding=tag.style.borderWidth=hX_6._ZPX;
+tag.style.display=hX_6._E;
+tag.setAttribute(hX_6._ALT, this.DOMobj.alt);
+tag.setAttribute(hX_6._TTL, this.DOMobj.title);
+this.mouseDiv=this.outerSpan.appendChild(tag);
+} else {
+if (this.image[hX_6.IMG_MOUSED] == null && this.image[hX_6.IMG_DEPRESSED] == null && this.image[hX_6.IMG_DISABLED] == null && !this.foundClass)	this.optimizeEvents=true;
+}
+this.sizeImageToAttributes(true);
+if (!this.optimizeEvents) {
+hX_6.attachComponentEvent (this.DOMobj, hX_6._onKD, hX_6._lN);
+hX_6.attachComponentEvent (this.DOMobj, hX_6._onKU, hX_6._lN);
+hX_6.attachComponentEvent (this.DOMobj, hX_6._onB, hX_6._lN);
+hX_6.attachComponentEvent (this.DOMobj, hX_6._onMC, hX_6._lN);
+hX_6.attachComponentEvent (this.DOMobj, hX_6._onMU, hX_6._lN);
+hX_6.attachComponentEvent (this.DOMobj, hX_6._onMD, hX_6._lN);
+hX_6.attachComponentEvent (this.DOMobj, hX_6._onMV, hX_6._lN);
+hX_6.attachComponentEvent (this.DOMobj, hX_6._onMO, hX_6._lN);
+hX_6.attachComponentEvent (this.DOMobj, hX_6._onMM, hX_6._lN);
+if (this.mouseDiv) {
+hX_6.attachEvent (this.mouseDiv, hX_6._onMC, hX_6._lN, this.dispatchRelay);
+hX_6.attachEvent (this.mouseDiv, hX_6._onMU, hX_6._lN, this.dispatchRelay);
+hX_6.attachEvent (this.mouseDiv, hX_6._onMD, hX_6._lN, this.dispatchRelay);
+hX_6.attachEvent (this.mouseDiv, hX_6._onMV, hX_6._lN, this.dispatchRelay);
+hX_6.attachEvent (this.mouseDiv, hX_6._onMO, hX_6._lN, this.dispatchRelay);
+hX_6.attachEvent (this.mouseDiv, hX_6._onMM, hX_6._lN, this.dispatchRelay);
+}
+hX_6.i.attachMonitor(this.DOMobj, "standard1", hX_6._DSB, hX_6._RDO, hX_6._ALT, hX_6._TTL);
+if (!this.noResize && this.outerSpan) hX_6.i.attachResizeMonitor(this.DOMobj);
+}
+return true;
+}
+HxG_6.prototype.JSFImage.prototype.sizeImageToAttributes=function (skipPrep) {
+if (!this.DOMobj) return false;
+if (skipPrep==null) this.prepImages();
+if (this.outerSpan && (this.DOMobj.parentNode.id==undefined || this.DOMobj.parentNode.id != this.DOMobj.id + "_SPAN")) {
+this.DOMobj.parentNode.insertBefore(this.outerSpan, this.DOMobj);
+if (this.innerSpan)
+this.outerSpan.insertBefore(this.DOMobj, this.innerSpan);
+else
+ this.outerspan.appendChild(this.DOMobj);
+}
+if (this.labelTag  && this.DOMobj.value!=undefined && this.DOMobj.value!=null && this.DOMobj.value.length > 0) {
+this.label=this.DOMobj.value;
+this.DOMobj.value=hX_6._E;
+}
+if (this.outerSpan) {
+if (this.gE(hX_6._DSP) == hX_6._NO)
+this.outerSpan.style.display=hX_6._NO;
+else {
+var bDisabled=(hX_6.g.isDisabled(this.DOMobj) || this.DOMobj.readOnly);
+var bHideFocus=(this.DOMobj.hideFocus) ? this.DOMobj.hideFocus : false;
+var bNoSelect=(this.DOMobj.unselectable) ? this.DOMobj.unselectable : false;
+var bVisible=this.gE(hX_6._VIS), zIndex=this.gE(hX_6._ZND), prop, prop1, prop2;
+zIndex=hX_6.isString(zIndex) ? parseInt(zIndex) : zIndex;
+if (this.outerSpan.style.display != this.dispType)	this.outerSpan.style.display=this.dispType;
+if (this.outerSpan.style.visibility	!= bVisible)this.outerSpan.style.visibility=bVisible;
+if (this.DOMobj.hideFocus && this.outerspan.hideFocus != bHideFocus)		this.outerSpan.HideFocus=bHideFocus;
+if (this.DOMobj.unselectable && this.outerspan.unselectable != bNoSelect)	this.outerSpan.unselectable=bNoSelect;
+if (zIndex!=null && zIndex > 0) {
+if (this.outerSpan.style.zIndex != (zIndex+hX_6._E)) this.outerSpan.style.zIndex=zIndex+hX_6._E;
+zIndex=(zIndex+1)+hX_6._E;
+}
+prop2=(this.label && this.label.length > 0 && this.label.indexOf("<")<0) ? this.label : null;
+prop=(this.DOMobj.alt && this.DOMobj.alt.length > 0) ? this.DOMobj.alt : prop2;
+prop1=(this.DOMobj.title && this.DOMobj.title.length > 0) ? this.DOMobj.title : prop2;
+if (prop && this.DOMobj.alt != prop) this.DOMobj.alt=prop;
+if (prop1 && this.DOMobj.title != prop1) this.DOMobj.title=prop1;
+if (this.labelTag || this.iconTag) {
+if (this.innerSpan && zIndex && this.innerSpan.style.zIndex != zIndex) this.innerSpan.style.zIndex=zIndex;
+if (this.labelTag) {
+if (this.labelTag && hX_6.getIHTML(this.labelTag) != this.label) hX_6.setIHTML(this.labelTag, this.label);
+if (this.labelTag.className != this.labelClass[hX_6.IMG_NORMAL]) this.labelTag.className=this.labelClass[hX_6.IMG_NORMAL];
+if (hX_6.getIHTML(this.labelTag) != this.label) hX_6.setIHTML(this.labelTag, this.label);
+if (hX_6.brw.isIE() && this.labelTag.disabled != bDisabled) this.labelTag.disabled=bDisabled;
+}
+if (this.iconTag) {
+if (this.iconTag.className != this.iconClass[hX_6.IMG_NORMAL]) this.iconTag.className=this.iconClass[hX_6.IMG_NORMAL];
+if (hX_6.brw.isIE() && this.iconTag.disabled != bDisabled) this.iconTag.disabled=bDisabled;
+this.iconTag.src=(bDisabled && this.icon[hX_6.IMG_DISABLED] && this.icon[hX_6.IMG_DISABLED].src)?(this.icon[hX_6.IMG_DISABLED].src):(this.icon[hX_6.IMG_NORMAL].src);
+}
+if (this.mouseDiv) {
+if (this.mouseDiv.disabled != bDisabled) this.mouseDiv.disabled=bDisabled;
+if (prop && this.mouseDiv.alt != prop) this.mouseDiv.alt=prop;
+if (prop1 && this.mouseDiv.title != prop1) this.mouseDiv.title=prop1;
+prop2=this.gE(hX_6._CRS);
+if (prop2 && prop2.length > 0) hX_6.g.setP(this.mouseDiv, hX_6._CRS, prop2);
+if (zIndex && this.mouseDiv.style.zIndex != zIndex) this.mouseDiv.style.zIndex=zIndex;
+}
+}
+}
+}
+if (!hX_6.brw.isIE() && !this.HTMLrendered) hX_6.i.startTimerTimed(this.DOMobj.id, "redraw", "redraw", 10);
+return true;
+}
+HxG_6.prototype.JSFImage.prototype.sizeContentToAttributes=function () {
+var prop,align,span,t,lf,tp,btnHeight=hX_6.g.getRendHeight(this.DOMobj), btnWidth=hX_6.g.getRendWidth(this.DOMobj);
+if (this.innerSpan) {
+this.innerSpan.style.fontSize=this.gE(hX_6._FSZ);
+this.innerSpan.style.fontFamily=this.gE("font-family");
+this.innerSpan.style.fontWeight=this.gE("font-weight");
+this.innerSpan.style.fontStyle=this.gE("font-style");
+this.innerSpan.style.fontVariant=this.gE("font-variant");
+this.innerSpan.style.textDecoration=this.gE("text-decoration");
+this.innerSpan.style.color=this.gE("color");
+if (hX_6.brw.isIE()) {
+this.outerSpan.style.marginLeft=this.gE(hX_6._MGNL);
+this.outerSpan.style.marginRight=this.gE(hX_6._MGNR);
+lf=0;
+tp=hX_6.g.getAbsPosTop(this.DOMobj) - hX_6.g.getAbsPosTop(this.outerSpan);
+if (this.DOMobj.tagName==hX_6._INP && this.DOMobj.type.toLowerCase()!=hX_6._lIMG) {
+if (!this.doRealignmentCalcOnceDone)	{
+this.buttonleftoffsemargin=(-this.DOMobj.offsetLeft)+ hX_6._PX;
+this.doRealignmentCalcOnceDone=true;
+}
+hX_6.g.setP(this.DOMobj, hX_6._LFT, this.buttonleftoffsemargin);
+}
+} else {
+lf=this.DOMobj.offsetLeft;
+tp=hX_6.g.getAbsPosTop(this.DOMobj) - hX_6.g.getAbsPosTop(this.outerSpan);
+}
+hX_6.g.setP(this.innerSpan, hX_6._LFT, lf+hX_6._PX);
+hX_6.g.setP(this.innerSpan, hX_6._TOP, tp+hX_6._PX);
+hX_6.g.setP(this.innerSpan, hX_6._WD, (btnWidth + hX_6._PX));
+hX_6.g.setP(this.innerSpan, hX_6._HT, (btnHeight + hX_6._PX));
+if (this.mouseDiv) {
+hX_6.g.setP(this.mouseDiv, hX_6._LFT, lf+hX_6._PX);
+hX_6.g.setP(this.mouseDiv, hX_6._TOP, tp+hX_6._PX);
+hX_6.g.setP(this.mouseDiv, hX_6._WD, (btnWidth + hX_6._PX));
+hX_6.g.setP(this.mouseDiv, hX_6._HT, (btnHeight + hX_6._PX));
+}
+}
+if (this.labelTag && !this.labelAbsolute) {
+align=hX_6._LFT;
+if (this.labelClass[hX_6.IMG_NORMAL] && this.labelClass[hX_6.IMG_NORMAL].length>0) {
+prop=hX_6.getClassStyle(this.labelClass[hX_6.IMG_NORMAL], hX_6._TXA);
+align=(prop && prop.length>0 && prop!=hX_6._AUT) ? prop: align;
+}
+span=hX_6.g.getRendWidth(this.labelTag);
+t=((btnWidth - span) > 0) ? (btnWidth - span) : 0;
+t=((align == hX_6._LFT) ? 0 : ((align == hX_6._RGT) ? t : (Math.floor(t/2)))) + hX_6._PX;
+hX_6.g.setP(this.labelTag, hX_6._LFT, t);
+align=hX_6._MID;
+if (this.labelClass[hX_6.IMG_NORMAL] && this.labelClass[hX_6.IMG_NORMAL].length>0) {
+prop=hX_6.getClassStyle(this.labelClass[hX_6.IMG_NORMAL], hX_6._VXA);
+align=(prop && prop.length>0 && prop!=hX_6._AUT) ? prop: align;
+}
+span=hX_6.g.getRendHeight(this.labelTag);
+t=((btnHeight - span)) > 0 ? (btnHeight - span) : 0;
+t=((align == hX_6._TOP) ? 0 : ((align == hX_6._BOT) ? (t) : (Math.floor(t/2)))) + hX_6._PX;
+hX_6.g.setP(this.labelTag, hX_6._TOP, t);
+}
+if (this.iconTag && !this.iconAbsolute) {
+align=hX_6._LFT;
+if (this.iconClass[hX_6.IMG_NORMAL] && this.iconClass[hX_6.IMG_NORMAL].length>0) {
+prop=hX_6.getClassStyle(this.iconClass[hX_6.IMG_NORMAL], hX_6._TXA);
+align=(prop && prop.length>0 && prop!=hX_6._AUT) ? prop: align;
+}
+span=hX_6.g.getRendWidth(this.iconTag);
+if (align==hX_6._RGT && this.iconFromClass) {
+prop=parseInt(hX_6.g.getP(this.iconTag, hX_6._MGNR),10);
+span+=(isNaN(prop) || prop==null)?0:prop;
+}
+t=((btnWidth - span) > 0) ? (btnWidth - span) : 0;
+t=((align == hX_6._LFT) ? 0 : ((align == hX_6._RGT) ? t : (Math.floor(t/2)))) + hX_6._PX;
+hX_6.g.setP(this.iconTag, hX_6._LFT, t);
+align=hX_6._MID;
+if (this.iconClass[hX_6.IMG_NORMAL] && this.iconClass[hX_6.IMG_NORMAL].length>0) {
+prop=hX_6.getClassStyle(this.iconClass[hX_6.IMG_NORMAL], hX_6._VXA);
+align=(prop && prop.length>0 && prop!=hX_6._AUT) ? prop: align;
+}
+span=hX_6.g.getRendHeight(this.iconTag);
+if (align==hX_6._BOT && this.iconFromClass) {
+prop=parseInt(hX_6.g.getP(this.iconTag, hX_6._MGNB),10);
+span+=(isNaN(prop) || prop==null)?0:prop;
+}
+t=((btnHeight - span)) > 0 ? (btnHeight - span) : 0;
+t=((align == hX_6._TOP) ? 0 : ((align == hX_6._BOT) ? t : (Math.floor(t/2)))) + hX_6._PX;
+hX_6.g.setP(this.iconTag, hX_6._TOP, t);
+}
+}
+HxG_6.prototype.JSFTwistie=function () {
+this.type=hX_6.CMP_twistie;
+this.direction=hX_6.TW_RT;
+this.style=hX_6.TW_VEE;
+this.barstyle=hX_6.TW_NOBAR;
+this.size=this.sColorEdge=this.sColorFill=null;
+this.ptype=hX_6._BTN;
+this.canvas=this.colorEdge =this.colorFill=null;
+this.height=this.width=this.saveCanvasLeft=this.saveCanvasTop=0;
+this.saveBorderStyle=hX_6._E;
+this.attributeTable=[];
+this.attributeTable	['direction']=['direction',	hX_6.ARG_TO_NUM,	false,	0,		3];
+this.attributeTable	['style']=['style',		hX_6.ARG_TO_NUM,	false,	0,		3];
+this.attributeTable	['bar-style']=['barstyle',	hX_6.ARG_TO_NUM,	false,	0,		2];
+this.attributeTable	['size']=['size',		hX_6.ARG_TO_NUM,	false,	0,	   999];
+this.attributeTable ['color-edge']=['sColorEdge',hX_6.ARG_TO_NAN,	false,	null,	null];
+this.attributeTable ['color-fill']=['sColorFill',hX_6.ARG_TO_NAN,	false,	null,	null];
+this.setAttribute(arguments);
+}
+HxG_6.prototype.JSFTwistie.prototype.onPageLoad=function () {
+hX_6.bodyLoadRedrawA=true;
+this.redraw();
+return true;
+}
+HxG_6.prototype.JSFTwistie.prototype.redraw=function () {
+this.sizeImageToAttributes();
+this.draw();
+return true;
+}
+HxG_6.prototype.JSFTwistie.prototype.uirelease=function () {
+return true;
+}
+HxG_6.prototype.JSFTwistie.prototype.destroy=function () {
+this.DOMobj.onmousedown=this.DOMobj.onmouseout=this.DOMobj.onmouseup=null;
+return true;
+}
+HxG_6.prototype.JSFTwistie.prototype.setValue=function (value) {
+return false;
+}
+HxG_6.prototype.JSFTwistie.prototype.getValue=function() {
+return null;
+}
+HxG_6.prototype.JSFTwistie.prototype.setAttribute=function(a) {
+hX_6.parseArg (this.attributeTable, this, a);
+if (this.HTMLrendered) this.redraw();
+return true;
+}
+HxG_6.prototype.JSFTwistie.prototype.getAttribute=function (attribute) {
+return (hX_6.getArg(this.attributeTable, this, attribute));
+}
+HxG_6.prototype.JSFTwistie.prototype.sizeImageToAttributes=function () {
+if (!this.DOMobj) return false;
+if (this.DOMobj.tagName != hX_6._BTN && this.DOMobj.tagName != hX_6._INP && this.DOMobj.tagName == hX_6._IMG) return false;
+if (this.size==null || this.size==hX_6._E) {
+var sSize=hX_6.g.getP(this.DOMobj, hX_6._HT), nSize=parseInt(sSize, 10);
+this.size=(nSize == null || nSize == 0 || isNaN(nSize)) ? 7 : (Math.floor((nSize-2+1)/2));
+}
+var realclass=this.DOMobj.className;
+this.DOMobj.className=realclass + "_twistie";
+var twistieColorFill=hX_6.g.getP(this.DOMobj, hX_6._COR), twistieColorEdge=hX_6.g.getP(this.DOMobj, hX_6._BRLCL), twistieType=hX_6.g.getP(this.DOMobj, "list-style-type"), twistieType1=hX_6.g.getP(this.DOMobj, "list-style-position");
+this.DOMobj.className=realclass;
+this.colorFill=this.sColorFill;
+this.colorEdge=this.sColorEdge;
+if (this.sColorFill == hX_6._E || this.sColorEdge == hX_6._E || this.sColorFill == null || this.sColorEdge == null) {
+if (this.sColorFill == hX_6._E || this.sColorFill == null) this.colorFill=twistieColorFill;
+if (this.sColorEdge == hX_6._E || this.sColorEdge == null) this.colorEdge=twistieColorEdge;
+}
+if (this.DOMobj.disabled) this.colorFill=this.colorEdge="GrayText";
+this.colorFill=(this.colorFill == hX_6._E) ? "windowtext" : this.colorFill;
+this.colorEdge=(this.colorEdge == hX_6._E) ? "windowtext" : this.colorEdge;
+if (twistieType == "square") this.style=hX_6.TW_TRI;
+else if (twistieType == "circle") this.style=hX_6.TW_PUG;
+else if (twistieType == "decimal") this.style=hX_6.TW_SNOUT;
+if (twistieType1 == "inside") this.barstyle=hX_6.TW_BAR_INNER;
+this.height=this.width=0;
+var even=((Math.floor(this.size/2)*2) == this.size);
+var b=(this.barstyle == hX_6.TW_BAR_INNER) ? 4: 0
+ var v=(this.style == hX_6.TW_SNOUT) ? (even ? this.size :this.size+1) : ((this.style == hX_6.TW_TRI) ? Math.floor(((this.size+1)/2)) : Math.floor(((this.size+1)/2) + 1));
+if (this.direction == hX_6.TW_LT || this.direction == hX_6.TW_RT) {
+this.height=this.size;
+this.width=v + b;
+} else {
+this.width=this.size;
+this.height=v + b;
+}
+if (this.DOMobj.tagName == hX_6._BTN) {
+this.canvas=this.DOMobj.lastChild;
+if (this.canvas == null || this.canvas.tagName != hX_6._DIV || this.canvas.id != (this.DOMobj.id+"_TWISTIE")) {
+this.canvas=document.createElement(hX_6._DIV);
+this.canvas.setAttribute (hX_6._ID, this.DOMobj.id+"_TWISTIE");
+this.canvas.style.position=hX_6._REL;
+this.canvas.tabIndex=hX_6.__1;
+this.canvas.unselectable=hX_6._ON;
+this.DOMobj.appendChild(this.canvas);
+this.ptype=hX_6._BTN;
+}
+} else {
+var div=this.DOMobj.parentNode;
+if (div == null || div.tagName==undefined || div.tagName != hX_6._DIV || div.id==undefined || div.id != (this.DOMobj.id+"_TWISTIE")) {
+var find=hX_6.getElementById(this.DOMobj.id+"_TWISTIE");
+if (find) {
+div=find;
+this.DOMobj.parentNode.insertBefore(div, this.DOMobj);
+if (div.firstChild)
+div.insertBefore(this.DOMobj, div.firstChild);
+else
+ appendChild(this.DOMobj);
+}
+}
+if (div == null || div.tagName != hX_6._DIV || div.id==undefined || div.id != (this.DOMobj.id+"_TWISTIE")) {
+div=document.createElement(hX_6._DIV);
+div.setAttribute (hX_6._ID, this.DOMobj.id+"_TWISTIE");
+div.style.position=hX_6._REL;
+this.DOMobj.parentNode.insertBefore(div, this.DOMobj);
+div.appendChild(this.DOMobj);
+this.DOMobj.style.position=hX_6._REL;
+if (this.DOMobj.style.zIndex == hX_6._E || this.DOMobj.style.zIndex == hX_6._Z  || this.DOMobj.style.zIndex == hX_6._AUT) this.DOMobj.style.zIndex=hX_6._2;
+this.DOMobj.style.backgroundColor=hX_6._TRN;
+if (hX_6.brw.isNavOrMoz()) {
+var parent=div.parentNode;
+if (parent.tagName && parent.tagName == hX_6._TD) {
+parent.style.width=this.DOMobj.offsetWidth + hX_6._PX;
+div.style.height=this.DOMobj.offsetHeight + hX_6._PX;
+}
+}
+this.canvas=document.createElement(hX_6._DIV);
+this.canvas.style.position=hX_6._ABS;
+this.canvas.tabIndex=hX_6.__1;
+this.canvas.unselectable=hX_6._ON;
+this.canvas.zIndex=parseInt(this.DOMobj.style.zIndex,10)-1;
+div.appendChild(this.canvas);
+this.DOMobj.onmousedown=this.onredirect;
+this.DOMobj.onmouseout=this.onredirect;
+this.DOMobj.onmouseup=this.onredirect;
+this.ptype=hX_6._INP;
+}
+this.canvas=div.lastChild;
+}
+var child=this.canvas.firstChild;
+while (child != null) {
+this.canvas.removeChild(child);
+child=this.canvas.firstChild;
+}
+this.canvas.style.width=this.width + hX_6._PX;
+this.canvas.style.height=this.height + hX_6._PX;
+this.canvas.style.backgroundColor=hX_6._TRN;
+var align, xWidth, xHeight, xx, yy, xOff, yOff;
+if (this.ptype == hX_6._BTN) {
+if (hX_6.brw.isNavOrMoz()) {
+align=hX_6.g.getP(this.DOMobj, hX_6._TXA);
+if (align == hX_6._CTR) {
+xWidth=hX_6.g.getRendWidth(this.DOMobj);
+xx=Math.floor((xWidth - this.width  - 1)/2);
+this.canvas.style.left=(xx - 3) + hX_6._PX;
+}
+align=hX_6.g.getP(this.DOMobj, hX_6._VXA);
+if (align == hX_6._MID)
+this.canvas.style.top=hX_6.__1 + hX_6._PX;
+}
+} else {
+xHeight=hX_6.g.getRendHeight(this.DOMobj);
+xWidth=hX_6.g.getRendWidth(this.DOMobj);
+yy=Math.round((xHeight- this.height)/2);
+xx=Math.round((xWidth - this.width)/2);
+yOff=xOff=0;
+this.canvas.style.left=(xx + xOff) + hX_6._PX;
+this.canvas.style.top=(yy + yOff) + hX_6._PX;
+}
+this.saveBorderStyle=this.DOMobj.style.borderStyle;
+this.saveCanvasLeft=this.canvas.style.left;
+this.saveCanvasTop=this.canvas.style.top;
+return ((this.direction == hX_6.TW_LT || this.direction == hX_6.TW_RT) ? this.width : this.height);
+}
+HxG_6.prototype.JSFTwistie.prototype.onredirect=function (evt) {
+evt=(evt) ? evt : ((event) ? event: null);
+if (evt) {
+var src=hX_6.evtGetTarget(evt);
+if (src && src.tagName == hX_6._INP) {
+var thisp=hX_6.getComponentById(src.id);
+if (thisp && !thisp.DOMobj.disabled) {
+thisp.drawState(evt);
+}
+}
+}
+}
+HxG_6.prototype.JSFTwistie.prototype.drawState=function (evt) {
+if (this.DOMobj.disabled) return;
+if (evt.type==hX_6._evMD) {
+hX_6.i.setFocus(this.DOMobj);
+this.saveBorderStyle=this.DOMobj.style.borderStyle;
+this.saveCanvasLeft=this.canvas.style.left;
+this.saveCanvasTop=this.canvas.style.top;
+this.DOMobj.style.borderStyle=hX_6._INS;
+this.canvas.style.left=parseInt(this.canvas.style.left, 10) + 1;
+this.canvas.style.top=parseInt(this.canvas.style.top, 10) + 1;
+} else {
+if (this.DOMobj.style.borderStyle != this.saveBorderStyle)	this.DOMobj.style.borderStyle=this.saveBorderStyle;
+if (this.canvas.style.top  != this.saveCanvasTop)			this.canvas.style.top=this.saveCanvasTop;
+if (this.canvas.style.left != this.saveCanvasLeft)			this.canvas.style.left=this.saveCanvasLeft;
+}
+}
+HxG_6.prototype.JSFTwistie.prototype.draw=function() {
+if (!this.DOMobj || !this.canvas)
+return false;
+var stroke=(this.style == hX_6.TW_SNOUT) ? 2 : 1;
+var d, i, j, k=0, r, xs;
+if (this.direction == hX_6.TW_RT || this.direction == hX_6.TW_LT) {
+r=(this.direction == hX_6.TW_RT);
+j=this.height;
+i=(r) ? 0 : this.width-1;
+if (this.style != hX_6.TW_VEE)
+this.drawLine(i, k, 1, j, false, false, true, false, 1, this.colorEdge, this.colorFill);
+else
+ this.drawLine(i, k, 1, j, true, true, false, false, 1, this.colorEdge, hX_6._TRN);
+if (this.style == hX_6.TW_TRI) {
+j -= 2;
+k++;
+}
+for (i=((r) ? i+1:i-stroke); j > stroke; i=((r) ? i+stroke:i-stroke)) {
+this.drawLine(i, k, stroke, j, true, true, false, false, (this.style == hX_6.TW_VEE)?2:1, this.colorEdge, (this.style == hX_6.TW_VEE)?hX_6._TRN:this.colorFill);
+k++;
+j -= 2;
+}
+if (j > 0)
+this.drawLine((r) ? i : i+(stroke-1), k, 1, j, false, false, true, false, 1, this.colorEdge, this.colorFill);
+if (this.barstyle == hX_6.TW_BAR_INNER) {
+xs=(this.style == hX_6.TW_VEE || this.style == hX_6.TW_TRI) ? 0 : 2;
+this.drawLine((r) ? this.width-2 : 0, (xs > 0) ? 1:0, 2, this.height-xs, false, false, true, false, 1, this.colorEdge, this.colorFill);
+}
+} else {
+d=(this.direction == hX_6.TW_DN);
+i=(d) ? 0:this.height-1;
+j=this.width;
+if (this.style!=hX_6.TW_VEE)
+this.drawLine(k, i, j, 1, true, false, false, false, 1, this.colorEdge, this.colorFill);
+else
+ this.drawLine(k, i, j, 1, false, false, true, true, 1, this.colorEdge, hX_6._TRN);
+if (this.style == hX_6.TW_TRI) {
+j -= 2;
+k++;
+}
+for (i=((d) ? i+1:i-stroke); j > stroke; i=((d) ? i+stroke : i-stroke)) {
+this.drawLine(k, i, j, stroke, false, false, true, true, (this.style == hX_6.TW_VEE)?2:1,this.colorEdge, (this.style == hX_6.TW_VEE)?hX_6._TRN:this.colorFill);
+k++;
+j -= 2;
+}
+if (j > 0)
+this.drawLine(k, (d) ? i:i+(stroke-1), j, 1, true, false, false, false, 1, this.colorEdge, this.colorFill);
+if (this.barstyle == hX_6.TW_BAR_INNER) {
+xs=(this.style == hX_6.TW_VEE || this.style == hX_6.TW_TRI) ? 0 : 2;
+this.drawLine((xs > 0) ? 1:0, (d) ? this.height-2:0, this.width-xs, 2, (d) ? false:true, (d)? true:false, false, false, 1, this.colorEdge, this.colorFill);
+}
+}
+return true;
+}
+HxG_6.prototype.JSFTwistie.prototype.drawLine=function(xOffset, yOffset, width, height, T, B, L, R, n, edge, fill) {
+var poly=document.createElement(hX_6._DIV);
+poly.tabIndex=hX_6._1;
+poly.style.position=hX_6._ABS;
+poly.style.borderColor=edge;
+poly.style.borderStyle=hX_6._SLD;
+poly.style.borderWidth=hX_6._ZPX;
+poly.style.overflow=hX_6._HI;
+this.canvas.appendChild(poly);
+var w=width, h=height, hide=false;
+if (hX_6.brw.isW3Cstd()) {
+if (T && B) {
+h=h - (2*n);
+if (h <= 0) {
+hide=true;
+n=height;
+h=1;
+}
+} else if (L && R) {
+w=w - (2*n);
+if (w <= 0) {
+hide=true;
+n=width;
+w=1;
+}
+} else if (L || R) {
+hide=(h <= n);
+w -= n;
+} else if (T || B) {
+hide=(w <= n);
+h -= n;
+}
+}
+poly.style.width=w + hX_6._PX;
+poly.style.height=h + hX_6._PX;
+poly.style.backgroundColor=(hide) ? hX_6._TRN : fill;
+poly.style.left=xOffset + hX_6._PX;
+poly.style.top=yOffset + hX_6._PX;
+if (T) 	poly.style.borderTopWidth=n + hX_6._PX;
+if (B)	poly.style.borderBottomWidth=n + hX_6._PX;
+if (L)	poly.style.borderLeftWidth=n + hX_6._PX;
+if (R)	poly.style.borderRightWidth=n + hX_6._PX;
+if (hide) {
+if (B)	poly.style.borderBottomWidth=hX_6._ZPX;
+if (R)	poly.style.borderRightWidth=hX_6._ZPX;
+}
+}

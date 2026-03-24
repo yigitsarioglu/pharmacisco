@@ -33,7 +33,7 @@ class PrinterManager:
         
         painter = QPainter()
         if not painter.begin(printer):
-            print("Failed to open printer.")
+            print("Baskı işlemi başlatılamadı veya kullanıcı tarafından iptal edildi.")
             return False
             
         # Delegating painting to the renderer

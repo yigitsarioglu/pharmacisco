@@ -124,8 +124,16 @@ class LabelRenderer:
         # Label Right
         # In image: "BİTİŞ TARİHİ" text
         p.setPen(QColor("#AAAAAA")) # Slightly dimmed
-        p.setFont(QFont("Arial", 6))
-        p.drawText(QRectF(w/2, y_cursor, w/2 - m_side, h_info), Qt.AlignRight | Qt.AlignVCenter, "HASTA BİLGİSİ")
+        
+        expiry = data.get("expiry_date", "")
+        if expiry:
+            p.setFont(QFont("Arial", 7, QFont.Bold))
+            right_text = f"Bitiş : {expiry}"
+        else:
+            p.setFont(QFont("Arial", 6))
+            right_text = ""
+            
+        p.drawText(QRectF(w/2, y_cursor, w/2 - m_side, h_info), Qt.AlignRight | Qt.AlignVCenter, right_text)
         
         y_cursor += h_info
         

@@ -78,11 +78,12 @@ class BrowserPage(QWidget):
         
         # Table
         self.table = QTableWidget()
-        self.table.setColumnCount(6)
-        self.table.setHorizontalHeaderLabels(["Hasta Adı", "İlaç Adı", "Barkod", "Durum", "Doktor Talimatı", "Talimat (DB Bulunan)"])
+        self.table.setColumnCount(7)
+        self.table.setHorizontalHeaderLabels(["Hasta Adı", "İlaç Adı", "Barkod", "Durum", "Doktor Talimatı", "Talimat (DB Bulunan)", "Bitiş Tarihi"])
         self.table.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch) # Drug Name
         self.table.horizontalHeader().setSectionResizeMode(4, QHeaderView.Stretch) # Doctor Instruction
         self.table.horizontalHeader().setSectionResizeMode(5, QHeaderView.Stretch) # Instruction DB
+        self.table.hideColumn(6) # Hide Expiry Date
         self.table.setSelectionBehavior(QTableWidget.SelectRows)
         self.table.setSelectionMode(QTableWidget.ExtendedSelection)
         self.table.itemSelectionChanged.connect(self.update_preview)
@@ -174,6 +175,15 @@ class BrowserPage(QWidget):
             name = d.get("name", "")
             barcode = d.get("barcode", "")
             usage = d.get("usage", "")  # Medula'dan gelen doz/periyot bilgisi
+            freq = d.get("freq")
+            dose = d.get("dose")
+            period = d.get("period_type", "Günde")
+            expiry = d.get("expiry_date", "")
+
+            # If we received explicit frequency and dose, format it beautifully
+            if freq and dose:
+                from utils.instruction_parser import format_instruction
+                usage = format_instruction(freq, dose, name, period)
             
             # Lookup in DB
             status = "❌ Bulunamadı"
@@ -195,9 +205,9 @@ class BrowserPage(QWidget):
                 status = "✅ Eşleşti"
                 instruction = rec[5] if rec[5] else ""
             
-            self.add_row(patient, name, barcode, status, usage, instruction)
+            self.add_row(patient, name, barcode, status, usage, instruction, expiry)
             
-    def add_row(self, patient, drug, barcode, status, usage, instruction):
+    def add_row(self, patient, drug, barcode, status, usage, instruction, expiry=""):
         row = self.table.rowCount()
         self.table.insertRow(row)
         self.table.setItem(row, 0, QTableWidgetItem(patient))
@@ -206,6 +216,7 @@ class BrowserPage(QWidget):
         self.table.setItem(row, 3, QTableWidgetItem(status))
         self.table.setItem(row, 4, QTableWidgetItem(usage))
         self.table.setItem(row, 5, QTableWidgetItem(instruction))
+        self.table.setItem(row, 6, QTableWidgetItem(expiry))
         
         # Color status
         if "✅" in status:
@@ -219,6 +230,7 @@ class BrowserPage(QWidget):
         drug_name_table = self.table.item(row, 1).text()
         barcode = self.table.item(row, 2).text()
         doctor_usage = self.table.item(row, 4).text()
+        expiry_date = self.table.item(row, 6).text() if self.table.item(row, 6) else ""
         
         # Fetch details from DB for full data (Category, Full Instruction)
         # We need to query again because table only shows short instruction
@@ -239,7 +251,8 @@ class BrowserPage(QWidget):
             "category": "",
             "short_instruction": doctor_usage if doctor_usage else "",
             "full_instruction": "",
-            "transaction_id": ""
+            "transaction_id": "",
+            "expiry_date": expiry_date
         }
         
         if rec:

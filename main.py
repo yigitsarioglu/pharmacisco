@@ -11,12 +11,20 @@ for d in ['utils', 'printer', 'input', 'drug_matcher', 'ocr']:
 
 from PySide6.QtWidgets import QApplication, QDialog
 from PySide6.QtGui import QIcon
+from PySide6.QtCore import qInstallMessageHandler
 from ui.main_window import MainWindow
 from ui.license_dialog import LicenseDialog
 from ui.setup_dialog import SetupDialog
 from licence.license_manager import check_license_status
 
+def qt_message_handler(mode, context, message):
+    if "QWin32PrintEngine" in message or "QPainter::begin" in message:
+        return # Suppress printer cancellation warnings
+    # Print other Qt warnings
+    print(f"Qt Message: {message}")
+
 def main():
+    qInstallMessageHandler(qt_message_handler)
     app = QApplication(sys.argv)
     
     # Set Windows Taskbar Icon explicitly
