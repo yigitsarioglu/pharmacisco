@@ -12,6 +12,7 @@ from ui.pages.settings_page import SettingsPage
 from ui.pages.drug_manager_page import DrugManagerPage
 from ui.pages.drug_manager_page_en import DrugManagerPageEN
 from ui.pages.browser_page import BrowserPage
+from ui.pages.mobile_sync_page import MobileSyncPage
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -68,6 +69,7 @@ class MainWindow(QMainWindow):
         self.btn_manager_en = self.create_nav_btn("İlaç Yönetimi (EN)")
         self.btn_browser = self.create_nav_btn("Otomatik Browser")
         self.btn_ocr = self.create_nav_btn("Otomatik (OCR)")
+        self.btn_mobile_sync = self.create_nav_btn("Mobil Uygulamaya Gönder")
         self.btn_settings = self.create_nav_btn("Ayarlar")
         
         sidebar_layout.addWidget(self.btn_manual)
@@ -75,6 +77,7 @@ class MainWindow(QMainWindow):
         sidebar_layout.addWidget(self.btn_manager_en)
         sidebar_layout.addWidget(self.btn_browser)
         sidebar_layout.addWidget(self.btn_ocr)
+        sidebar_layout.addWidget(self.btn_mobile_sync)
         sidebar_layout.addStretch()
         sidebar_layout.addWidget(self.btn_settings)
         
@@ -85,6 +88,7 @@ class MainWindow(QMainWindow):
         self.page_manager_en = DrugManagerPageEN()
         self.page_browser = BrowserPage()
         self.page_ocr = OCRPage()
+        self.page_mobile_sync = MobileSyncPage()
         self.page_settings = SettingsPage()
         
         self.stack.addWidget(self.page_manual)      # 0
@@ -92,7 +96,8 @@ class MainWindow(QMainWindow):
         self.stack.addWidget(self.page_manager_en)  # 2
         self.stack.addWidget(self.page_browser)     # 3
         self.stack.addWidget(self.page_ocr)         # 4
-        self.stack.addWidget(self.page_settings)    # 5
+        self.stack.addWidget(self.page_mobile_sync) # 5
+        self.stack.addWidget(self.page_settings)    # 6
         
         # Connections
         self.btn_manual.clicked.connect(lambda: self.switch_page(0))
@@ -100,7 +105,8 @@ class MainWindow(QMainWindow):
         self.btn_manager_en.clicked.connect(lambda: self.switch_page(2))
         self.btn_browser.clicked.connect(lambda: self.switch_page(3))
         self.btn_ocr.clicked.connect(lambda: self.switch_page(4))
-        self.btn_settings.clicked.connect(lambda: self.switch_page(5))
+        self.btn_mobile_sync.clicked.connect(lambda: self.switch_page(5))
+        self.btn_settings.clicked.connect(lambda: self.switch_page(6))
         
         main_layout.addWidget(sidebar)
         main_layout.addWidget(self.stack)
@@ -111,8 +117,8 @@ class MainWindow(QMainWindow):
         # --- BACKGROUND LICENSE MONITORING ---
         self.license_timer = QTimer(self)
         self.license_timer.timeout.connect(self.monitor_license)
-        # Check every 5 minutes (5 * 60 * 1000 ms)
-        self.license_timer.start(300000)
+        # Check every 30 minutes (30 * 60 * 1000 ms)
+        self.license_timer.start(1800000)
 
     def monitor_license(self):
         """Runs every 5 minutes in the background to ensure license is still valid."""
@@ -155,7 +161,7 @@ class MainWindow(QMainWindow):
     def switch_page(self, index):
         self.stack.setCurrentIndex(index)
         # Handle button styling
-        btns = [self.btn_manual, self.btn_manager, self.btn_manager_en, self.btn_browser, self.btn_ocr, self.btn_settings]
+        btns = [self.btn_manual, self.btn_manager, self.btn_manager_en, self.btn_browser, self.btn_ocr, self.btn_mobile_sync, self.btn_settings]
         for i, btn in enumerate(btns):
             btn.setChecked(i == index)
 

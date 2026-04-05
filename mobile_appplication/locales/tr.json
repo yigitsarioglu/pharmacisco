@@ -1,0 +1,49 @@
+{
+  "login": {
+    "title": "Giriş Yap",
+    "subtitle": "Eczane ve İlaç Hatırlatıcınız",
+    "identifier_label": "TC Kimlik No / Telefon:",
+    "password_label": "Şifre",
+    "button": "Giriş Yap",
+    "register_link": "Hesabın yok mu? Kaydol",
+    "error_empty": "Lütfen alanları doldurunuz.",
+    "error_auth": "Giriş başarısız, bilgileri kontrol edin."
+  },
+  "register": {
+    "title": "Üye Ol",
+    "subtitle": "TC ve İletişim Bilgileri",
+    "national_id": "TC Kimlik Numaranız",
+    "phone": "Cep Telefonunuz",
+    "full_name": "Ad Soyad",
+    "button": "Kayıt Ol",
+    "login_link": "Zaten hesabınız var mı? Giriş Yapın",
+    "error_empty": "Lütfen tüm kayıt alanlarını doldurun.",
+    "success": "Başarı ile kayıt olundu! Şimdi giriş yapabilirsiniz."
+  },
+  "dashboard": {
+    "greeting": "Merhaba, {{name}}",
+    "no_meds": "Bugün almanız gereken ilaç yok.",
+    "taken": "Alındı",
+    "take_now": "Şimdi Al",
+    "today_meds": "Bugünkü İlaçlarınız"
+  },
+  "meds": {
+    "title": "İlaçlarım",
+    "manually_add": "İlaç Ekle",
+    "name": "İlaç Adı",
+    "dosage": "Doz (Örn: 1 tablet)",
+    "add_btn": "Ekle",
+    "delete_confirm": "Reçeteden çıkartılsın mı?"
+  },
+  "profile": {
+    "title": "Profil",
+    "language": "Dil Seçimi",
+    "logout": "Çıkış Yap"
+  },
+  "tabs": {
+    "home": "Ana Sayfa",
+    "meds": "İlaçlar",
+    "recipes": "Reçetelerim",
+    "profile": "Profil"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "login": {
+    "title": "Sign In",
+    "subtitle": "Your Pharmacy & Pill Reminder",
+    "identifier_label": "National ID / Phone:",
+    "password_label": "Password",
+    "button": "Sign In",
+    "register_link": "Don't have an account? Register",
+    "error_empty": "Please fill in all fields.",
+    "error_auth": "Login failed, please check your credentials."
+  },
+  "register": {
+    "title": "Register",
+    "subtitle": "National ID & Contact",
+    "national_id": "National ID (TC No)",
+    "phone": "Phone Number",
+    "full_name": "Full Name",
+    "button": "Sign Up",
+    "login_link": "Already have an account? Log in",
+    "error_empty": "Please fill ALL registration fields.",
+    "success": "Registered successfully! You may now log in."
+  },
+  "dashboard": {
+    "greeting": "Hello, {{name}}",
+    "no_meds": "No medications to take today.",
+    "taken": "Taken",
+    "take_now": "Take Now",
+    "today_meds": "Today's Medications"
+  },
+  "meds": {
+    "title": "My Medications",
+    "manually_add": "Add Medication",
+    "name": "Medication Name",
+    "dosage": "Dosage (e.g., 1 tablet)",
+    "add_btn": "Add",
+    "delete_confirm": "Delete from prescription?"
+  },
+  "profile": {
+    "title": "Profile",
+    "language": "Language",
+    "logout": "Log Out"
+  },
+  "tabs": {
+    "home": "Home",
+    "meds": "Meds",
+    "recipes": "Prescriptions",
+    "profile": "Profile"
+  }
+}

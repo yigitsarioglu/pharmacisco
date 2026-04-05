@@ -24,7 +24,7 @@ class DrugManagerPageEN(QWidget):
         
         self.table = QTableWidget()
         self.table.setColumnCount(4) # ID, Barcode, Name, Category
-        self.table.setHorizontalHeaderLabels(["ID", "Barkod", "İlaç Adı (TR)", "Kategori (TR)"])
+        self.table.setHorizontalHeaderLabels(["ID", "Barkod", "İlaç Adı (EN)", "Kategori (EN)"])
         self.table.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)
         self.table.setSelectionBehavior(QTableWidget.SelectRows)
         self.table.setSelectionMode(QTableWidget.SingleSelection)
@@ -96,8 +96,8 @@ class DrugManagerPageEN(QWidget):
             self.table.insertRow(row_idx)
             self.table.setItem(row_idx, 0, QTableWidgetItem(str(drug[0])))
             self.table.setItem(row_idx, 1, QTableWidgetItem(drug[1] if drug[1] else ""))
-            self.table.setItem(row_idx, 2, QTableWidgetItem(drug[2])) # Show TR name in table for easy finding
-            self.table.setItem(row_idx, 3, QTableWidgetItem(drug[3]))
+            self.table.setItem(row_idx, 2, QTableWidgetItem(drug[5] if drug[5] else drug[2])) # Show EN name, fallback to TR if empty
+            self.table.setItem(row_idx, 3, QTableWidgetItem(drug[6] if drug[6] else drug[3])) # Show EN category, fallback to TR if empty
             
         conn.close()
 
